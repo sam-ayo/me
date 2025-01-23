@@ -3,8 +3,6 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
-// ... existing imports ...
-
 const Theme = () => {
  const { theme, setTheme } = useTheme();
  const changeTheme = () => {
@@ -12,11 +10,11 @@ const Theme = () => {
   setTheme(newTheme);
  };
  return (
-  <div className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+  <div onClick={changeTheme} className="cursor-pointer">
    {theme === "light" ? (
-    <Sun onClick={() => changeTheme()} className="w-5 h-5" />
+    <Sun className="w-5 h-5" />
    ) : (
-    <Moon onClick={() => changeTheme()} className="w-5 h-5" />
+    <Moon className="w-5 h-5" />
    )}
   </div>
  );
@@ -24,7 +22,7 @@ const Theme = () => {
 
 const About = () => {
  return (
-  <p className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+  <p className="text-sm cursor-pointer hover:opacity-75">
    about
   </p>
  );
@@ -32,7 +30,7 @@ const About = () => {
 
 const Projects = () => {
  return (
-  <p className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+  <p className="text-sm cursor-pointer hover:opacity-75">
    projects
   </p>
  );
@@ -52,19 +50,30 @@ const SocialIcon = ({
    <Image
     src={src}
     alt={alt}
-    width={24}
-    height={24}
+    width={20}
+    height={20}
     className="hover:opacity-75 transition-opacity"
    />
   </a>
  );
 };
 
+const Logo = () => {
+   return (
+    <Image 
+    src='Logo.svg'
+    alt='logo'
+    width={200}
+    height={200}
+    />
+   ) 
+}
+
 const Socials = () => {
  return (
-  <div className="flex items-center gap-4">
-   <p className="text-sm text-gray-500 dark:text-gray-400">{"follow me :))"}</p>
-   <div className="flex gap-3">
+  <div className="flex flex-col items-center gap-3">
+   <p className="text-sm text-gray-500 dark:text-gray-400">follow me :)</p>
+   <div className="flex gap-2">
     <SocialIcon
      src="GitHub.svg"
      alt="github.com"
@@ -83,7 +92,8 @@ const Socials = () => {
 
 const Nav = () => {
  return (
-  <nav className="flex items-center justify-between p-4 border-b dark:border-gray-800">
+  <nav className="flex items-center justify-between px-4 py-2 bg-gray-950 text-white">
+  <Logo/>
    <div className="flex items-center gap-4">
     <Theme />
     <About />
@@ -93,6 +103,4 @@ const Nav = () => {
   </nav>
  );
 };
-
-// ... existing export ...
 export { Nav };
