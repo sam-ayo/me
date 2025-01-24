@@ -45,6 +45,7 @@ const SocialIcon = ({
  alt: string;
  link: string;
 }) => {
+ const { theme } = useTheme();
  return (
   <a href={link} target="_blank">
    <Image
@@ -52,16 +53,21 @@ const SocialIcon = ({
     alt={alt}
     width={24}
     height={24}
-    className="hover:opacity-75 transition-opacity"
+    className={`hover:opacity-75 transition-opacity ${
+      theme === 'light' ? 'invert' : ''
+    }`}
    />
   </a>
  );
 };
 
 const Logo = () => {
+ const { theme } = useTheme();
    return (
     <Image 
-    className="self-end"
+    className={`self-end ${
+      theme === 'light' ? 'invert' : ''
+    }`}
     src='Logo.svg'
     alt='logo'
     width={200}
@@ -93,7 +99,7 @@ const Socials = () => {
 
 const Nav = () => {
  return (
-  <nav className="flex item-end justify-between px-80 bg-gray-950 text-white">
+  <nav className="flex item-end justify-between px-80 bg-background text-primary">
    <Logo/>
    <div className="flex gap-8">
    <div className="flex items-end gap-8">
