@@ -22,7 +22,7 @@ const Theme = () => {
 
 const About = () => {
  return (
-  <p className="text-sm cursor-pointer hover:opacity-75">
+  <p className="text-md cursor-pointer hover:opacity-75">
    about
   </p>
  );
@@ -30,7 +30,7 @@ const About = () => {
 
 const Projects = () => {
  return (
-  <p className="text-sm cursor-pointer hover:opacity-75">
+  <p className="text-md cursor-pointer hover:opacity-75">
    projects
   </p>
  );
@@ -50,8 +50,8 @@ const SocialIcon = ({
    <Image
     src={src}
     alt={alt}
-    width={20}
-    height={20}
+    width={24}
+    height={24}
     className="hover:opacity-75 transition-opacity"
    />
   </a>
@@ -61,6 +61,7 @@ const SocialIcon = ({
 const Logo = () => {
    return (
     <Image 
+    className="self-end"
     src='Logo.svg'
     alt='logo'
     width={200}
@@ -72,7 +73,7 @@ const Logo = () => {
 const Socials = () => {
  return (
   <div className="flex flex-col items-center gap-3">
-   <p className="text-sm text-gray-500 dark:text-gray-400">follow me :)</p>
+   <p className="text-sm text-gray-500 dark:text-gray-400">follow mee :))</p>
    <div className="flex gap-2">
     <SocialIcon
      src="GitHub.svg"
@@ -92,14 +93,16 @@ const Socials = () => {
 
 const Nav = () => {
  return (
-  <nav className="flex items-center justify-between px-4 py-2 bg-gray-950 text-white">
-  <Logo/>
-   <div className="flex items-center gap-4">
+  <nav className="flex item-end justify-between px-80 bg-gray-950 text-white">
+   <Logo/>
+   <div className="flex gap-8">
+   <div className="flex items-end gap-8">
     <Theme />
     <About />
     <Projects />
    </div>
    <Socials />
+   </div>
   </nav>
  );
 };
