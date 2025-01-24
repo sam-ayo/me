@@ -10,7 +10,7 @@ const Theme = () => {
   setTheme(newTheme);
  };
  return (
-  <div onClick={changeTheme} className="cursor-pointer">
+  <div onClick={changeTheme} className="cursor-pointer hover:opacity-75">
    {theme === "light" ? (
     <Sun className="w-5 h-5" />
    ) : (
