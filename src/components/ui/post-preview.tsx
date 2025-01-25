@@ -51,12 +51,12 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
                 {yearPreviews.year}
             </p>
             <AnimatePresence>
-                {isOpen && (
+                {isOpen && yearPreviews.previews.length > 0 && (
                     <motion.div 
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.5 }}
                         className="flex flex-col"
                     >
                         {yearPreviews.previews.map(({title, tags, views}, index) => {
