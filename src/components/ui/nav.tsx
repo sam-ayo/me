@@ -2,6 +2,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import Link from "next/link";
 
 const Theme = () => {
  const { theme, setTheme } = useTheme();
@@ -57,15 +58,18 @@ const SocialIcon = ({
 const Logo = () => {
  const { theme } = useTheme();
    return (
-    <Image 
+     <Link
     className={`self-end ${
       theme === 'light' ? 'invert' : ''
     }`}
+     href="/">
+    <Image 
     src='Logo-In-Darkmode.svg'
     alt='logo'
     width={200}
     height={200}
     />
+     </Link>
    ) 
 }
 
