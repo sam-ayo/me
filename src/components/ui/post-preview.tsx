@@ -1,5 +1,5 @@
 "use client"
-import { ChevronDown,  Eye } from "lucide-react"
+import {  ChevronUp,  Eye } from "lucide-react"
 import { Badge } from "./badge"
 import {motion, AnimatePresence} from 'motion/react'
 import { useEffect, useState } from "react";
@@ -66,7 +66,7 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <ChevronDown size={16} />
+                    <ChevronUp size={16} />
                 </motion.div>
             </div>
             </p>
