@@ -19,7 +19,7 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
     return (
         <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
-        <p className="group-hover:underline cursor-pointer font-jetbrains-mono">{title}</p>
+        <p className="group-hover:underline cursor-pointer font-menlo">{title}</p>
         <div className="flex gap-2 cursor-default">
             {tags.map((tag, index) => {
                 return <Badge className="font-jetbrains-mono" key={index}>{tag}</Badge>

@@ -10,7 +10,8 @@ export default {
   theme: {
   	extend: {
 		fontFamily:{
-			'jetbrains-mono': ["JetBrains Mono","serif"]
+			'jetbrains-mono': ["JetBrains Mono","serif"],
+			'menlo': ["Menlo", "sans-serif"]
 		},
   		colors: {
   			background: 'hsl(var(--background))',
