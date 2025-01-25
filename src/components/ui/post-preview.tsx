@@ -1,5 +1,5 @@
 "use client"
-import { Eye } from "lucide-react"
+import { ChevronDown,  Eye } from "lucide-react"
 import { Badge } from "./badge"
 import {motion, AnimatePresence} from 'motion/react'
 import { useEffect, useState } from "react";
@@ -35,12 +35,27 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
 }
 
 const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+            return saved === 'true';
+        }
+        return false;
+    });
     const currentYear = new Date().getFullYear()
 
     useEffect(() => {
-        setIsOpen(yearPreviews.year === currentYear);
+        const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+        if (saved !== null) {
+            setIsOpen(saved === 'true');
+        } else {
+            setIsOpen(yearPreviews.year === currentYear);
+        }
     }, [yearPreviews.year, currentYear]);
+
+    useEffect(() => {
+        localStorage.setItem(`yearPreview_${yearPreviews.year}`, String(isOpen));
+    }, [isOpen, yearPreviews.year]);
 
     return(
         <div className="mt-16 flex flex-col gap-4">
@@ -48,7 +63,15 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
                 className="text-lg text-secondary font-jetbrains-mono cursor-pointer hover:opacity-80"
                 onClick={() => setIsOpen(!isOpen)}
             >
+            <div className="flex items-center gap-2">
                 {yearPreviews.year}
+                <motion.div
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <ChevronDown size={16} />
+                </motion.div>
+            </div>
             </p>
             <AnimatePresence>
                 {isOpen && yearPreviews.previews.length > 0 && (
