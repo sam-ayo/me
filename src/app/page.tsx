@@ -1,16 +1,14 @@
 "use client";
 
 import {  YearPreviews } from "@/components/ui/post-preview";
-import {  yearPreviews } from "./mock";
-
-
+import { getPosts } from "./get-posts";
 
 
 export default function Home() {
-
+ const allPosts = getPosts()
  return (
      <>
-    {yearPreviews.map((yearPreview, index) => {
+    {allPosts.map((yearPreview, index) => {
         return <YearPreviews key={index} yearPreviews={yearPreview}/>
     })}
      </>

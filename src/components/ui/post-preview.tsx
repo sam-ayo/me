@@ -4,15 +4,17 @@ import { Badge } from "./badge"
 import {motion, AnimatePresence} from 'motion/react'
 import { useEffect, useState } from "react";
 
-interface Preview {
+export interface Post {
     title: string;
     tags: string[];
+    date: Date;
+    content: string;
     views: number;
 }
 
-interface YearPreviews {
+export interface YearPosts {
     year: number;
-    previews: Preview[]
+    posts: Post[]
 }
 
 const PostPreview = ({title, tags, views }: {title: string, tags: string[], views: number}) => {
@@ -34,7 +36,7 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
     )
 }
 
-const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
+const YearPreviews = ({yearPreviews}: {yearPreviews: YearPosts}) => {
     const [isOpen, setIsOpen] = useState(false);
     const currentYear = new Date().getFullYear()
 
@@ -53,7 +55,7 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
 
     return(
         <div className="mt-16 flex flex-col gap-4">
-            <p 
+            <div 
                 className="text-lg text-secondary font-jetbrains-mono cursor-pointer hover:opacity-80"
                 onClick={() => setIsOpen(!isOpen)}
             >
@@ -66,9 +68,9 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
                     <ChevronDown size={16} />
                 </motion.div>
             </div>
-            </p>
+            </div>
             <AnimatePresence>
-                {isOpen && yearPreviews.previews.length > 0 && (
+                {isOpen && yearPreviews.posts.length > 0 && (
                     <motion.div 
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -76,7 +78,7 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
                         transition={{ duration: 0.5 }}
                         className="flex flex-col"
                     >
-                        {yearPreviews.previews.map(({title, tags, views}, index) => {
+                        {yearPreviews.posts.map(({title, tags, views}, index) => {
                             return (
                                 <div key={index}>
                                     <div className={`group hover:bg-accent/10 px-2 py-3 border-b-2 ${index === 0 ? 'border-t-2' : 'border-b-2'}`}>
