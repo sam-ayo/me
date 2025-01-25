@@ -23,7 +23,7 @@ const Theme = () => {
 
 const NavItem = ({text}:{text: string}) => {
  return (
-  <p className="text-md cursor-pointer hover:opacity-75 hover:underline">
+  <p className="text-md cursor-pointer hover:opacity-75 hover:underline font-jetbrains-mono">
    {text}
   </p>
  );
