@@ -35,10 +35,7 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
 }
 
 const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
-    const [isOpen, setIsOpen] = useState(() => {
-        const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
-        return saved === 'true';
-    });
+    const [isOpen, setIsOpen] = useState(false);
     const currentYear = new Date().getFullYear()
 
     useEffect(() => {
