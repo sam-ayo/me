@@ -36,11 +36,8 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
 
 const YearPreviews = ({yearPreviews}: {yearPreviews: YearPreviews}) => {
     const [isOpen, setIsOpen] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
-            return saved === 'true';
-        }
-        return false;
+        const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+        return saved === 'true';
     });
     const currentYear = new Date().getFullYear()
 
