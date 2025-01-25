@@ -33,8 +33,10 @@ export default function RootLayout({
      enableSystem
      disableTransitionOnChange
     >
+    <div className="px-96">
    <Nav />
      {children}
+    </div>
     </ThemeProvider>
    </body>
   </html>

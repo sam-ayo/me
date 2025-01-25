@@ -9,8 +9,12 @@ export default {
   ],
   theme: {
   	extend: {
+		fontFamily:{
+			'jetbrains-mono': ["JetBrains Mono","serif"]
+		},
   		colors: {
   			background: 'hsl(var(--background))',
+			'badge-background': 'hsl(var(--badge-background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',

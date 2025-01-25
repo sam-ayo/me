@@ -20,21 +20,14 @@ const Theme = () => {
  );
 };
 
-const About = () => {
+const NavItem = ({text}:{text: string}) => {
  return (
-  <p className="text-md cursor-pointer hover:opacity-75">
-   about
+  <p className="text-md cursor-pointer hover:opacity-75 hover:underline">
+   {text}
   </p>
  );
 };
 
-const Projects = () => {
- return (
-  <p className="text-md cursor-pointer hover:opacity-75">
-   projects
-  </p>
- );
-};
 
 const SocialIcon = ({
  src,
@@ -68,7 +61,7 @@ const Logo = () => {
     className={`self-end ${
       theme === 'light' ? 'invert' : ''
     }`}
-    src='Logo.svg'
+    src='Logo-In-Darkmode.svg'
     alt='logo'
     width={200}
     height={200}
@@ -77,18 +70,27 @@ const Logo = () => {
 }
 
 const Socials = () => {
+  const {theme} = useTheme()
  return (
   <div className="flex flex-col items-center gap-3">
    <p className="text-sm text-gray-500 dark:text-gray-400">follow mee :))</p>
    <div className="flex gap-2">
+   {theme === 'light' ? 
     <SocialIcon
-     src="GitHub.svg"
+     src="GitHub-In-Lightmode.svg"
      alt="github.com"
      link="https://github.com/sam-ayo"
     />
-    <SocialIcon src="X.svg" alt="x.com" link="https://x.com" />
+: 
     <SocialIcon
-     src="LinkedIn Circled.svg"
+     src="GitHub-In-Darkmode.svg"
+     alt="github.com"
+     link="https://github.com/sam-ayo"
+    />
+}
+    <SocialIcon src="X-In-Darkmode.svg" alt="x.com" link="https://x.com" />
+    <SocialIcon
+     src="LinkedIn-In-Darkmode.svg"
      alt="linkedin.com"
      link="https://www.linkedin.com/in/sam-ayo-adeoye/"
     />
@@ -99,13 +101,13 @@ const Socials = () => {
 
 const Nav = () => {
  return (
-  <nav className="flex item-end justify-between px-80 bg-background text-primary">
+  <nav className="sticky top-0 w-full flex item-end justify-between py-4 bg-background backdrop-blur-md text-primary z-[9999] border-b">
    <Logo/>
    <div className="flex gap-8">
    <div className="flex items-end gap-8">
     <Theme />
-    <About />
-    <Projects />
+    <NavItem text="about" />
+    <NavItem text="projects" />
    </div>
    <Socials />
    </div>
