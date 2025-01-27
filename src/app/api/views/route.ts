@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cacheClient } from "../../../../redis";
+// import { NextRequest, NextResponse } from "next/server";
+// import { cacheClient } from "../../../../redis";
 
-export async function POST(request: NextRequest) {
+// export async function POST(request: NextRequest) {
     // const {postId} = await request.json();
     // try {
     // const noOfViews = await cacheClient.get(postId)
@@ -15,4 +15,4 @@ export async function POST(request: NextRequest) {
     //     console.log(error)
     //     return NextResponse.json({message: error})
     // }
-}
+// }
