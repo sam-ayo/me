@@ -8,6 +8,7 @@ export default function Home() {
  const allPosts = getPosts()
  return (
      <>
+     in progress 🚧....
     {allPosts.map((yearPreview, index) => {
         return <YearPreviews key={index} yearPreviews={yearPreview}/>
     })}
