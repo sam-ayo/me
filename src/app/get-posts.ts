@@ -1,16 +1,16 @@
-import { Post, YearPosts  } from "@/components/ui/post-preview";
 import { allPosts } from "content-collections";
+import {  PostPreview, YearPosts } from "./(post)/Post";
 
-const getPosts = () => {
+const getPostPreview = () => {
     const posts: YearPosts[] = [] 
      allPosts.forEach(p => {
         const yearPost = posts.find((post)=> post.year == parseInt(p.year))
 
-        const post: Post = {
+        const post: PostPreview = {
             title: p.title,
+            id: p.id,
             tags: p.tags,
             date: p.date,
-            content: p.content,
             views: 1222,
         }
 
@@ -23,9 +23,15 @@ const getPosts = () => {
             yearPost.posts.push(post)
         }
     })
-    console.log(posts);
     posts.sort((a,b ) => b.year - a.year )
     return posts
 }
 
-export {getPosts}
+const getPost = ({postId}: {postId: string[]}) => {
+    const post = allPosts.find((p) => {
+        return p.id.replace('/', '') === postId.join('')
+    })
+    return post;
+}
+
+export {getPostPreview, getPost}

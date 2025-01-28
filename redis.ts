@@ -1,9 +1,9 @@
-import { createClient } from 'redis';
+import { Redis } from '@upstash/redis'
 
-const cacheClient = createClient();
+const cacheClient = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+})
 
-cacheClient.on('error', err => console.log('Redis Client Error', err));
-
-await cacheClient.connect();
 
 export {cacheClient}

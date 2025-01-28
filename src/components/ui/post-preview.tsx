@@ -3,22 +3,13 @@ import {  ChevronDown,   Eye } from "lucide-react"
 import { Badge } from "./badge"
 import {motion, AnimatePresence} from 'motion/react'
 import { useEffect, useState } from "react";
+import { YearPosts } from "@/app/(post)/Post";
+import Link from "next/link";
 
-export interface Post {
-    title: string;
-    tags: string[];
-    date: Date;
-    content: string;
-    views: number;
-}
 
-export interface YearPosts {
-    year: number;
-    posts: Post[]
-}
-
-const PostPreview = ({title, tags, views }: {title: string, tags: string[], views: number}) => {
+const PostPreview = ({id, title, tags, views }: {id: string, title: string, tags: string[], views: number}) => {
     return (
+        <Link href={`${id}`}>
         <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
         <p className="group-hover:underline cursor-pointer font-menlo">{title}</p>
@@ -33,6 +24,7 @@ const PostPreview = ({title, tags, views }: {title: string, tags: string[], view
         <p className="text-sm text-secondary font-jetbrains-mono">{views.toLocaleString()}</p>
         </div>
         </div>
+        </Link>
     )
 }
 
@@ -78,11 +70,11 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPosts}) => {
                         transition={{ duration: 0.5 }}
                         className="flex flex-col"
                     >
-                        {yearPreviews.posts.map(({title, tags, views}, index) => {
+                        {yearPreviews.posts.map(({id, title, tags, views}, index) => {
                             return (
                                 <div key={index}>
                                     <div className={`group hover:bg-accent/10 px-2 py-3 border-b-2 ${index === 0 ? 'border-t-2' : 'border-b-2'}`}>
-                                        <PostPreview title={title} tags={tags} views={views}/>
+                                        <PostPreview id={id} title={title} tags={tags} views={views}/>
                                     </div>
                                 </div>
                             )

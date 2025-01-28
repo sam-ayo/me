@@ -1,11 +1,11 @@
 "use client";
 
 import {  YearPreviews } from "@/components/ui/post-preview";
-import { getPosts } from "./get-posts";
+import { getPostPreview } from "./get-posts";
 
 
 export default function Home() {
- const allPosts = getPosts()
+ const allPosts = getPostPreview()
  return (
      <>
      in progress 🚧....

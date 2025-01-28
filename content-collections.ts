@@ -3,7 +3,7 @@ import { defineCollection, defineConfig } from "@content-collections/core";
 const posts = defineCollection({
   name: "posts",
   directory: "/posts",
-  include: "**/*.md",
+  include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
     tags: z.array(z.string()),
