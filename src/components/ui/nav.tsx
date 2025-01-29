@@ -70,7 +70,7 @@ const Logo = () => {
     width="0"
     height="0"
     priority
-    className="w-64 h-auto"
+    className="w-48 h-auto"
     />
      </Link>
    ) 
