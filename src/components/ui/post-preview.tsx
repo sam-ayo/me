@@ -10,20 +10,20 @@ import Link from "next/link";
 const PostPreview = ({id, title, tags, views }: {id: string, title: string, tags: string[], views: number}) => {
     return (
         <Link href={`${id}`}>
-        <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-2">
-        <p className="group-hover:underline cursor-pointer font-menlo">{title}</p>
-        <div className="flex gap-2 cursor-default">
-            {tags.map((tag, index) => {
-                return <Badge className="font-jetbrains-mono" key={index}>{tag}</Badge>
-            })}
-        </div>
-        </div>
-        <div className="flex items-center gap-1">
-        <Eye size={12}/>
-        <p className="text-sm text-secondary font-jetbrains-mono">{views.toLocaleString()}</p>
-        </div>
-        </div>
+            <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-start gap-4">
+                    <p className="group-hover:underline cursor-pointer font-menlo">{title}</p>
+                    <div className="flex items-center gap-1 shrink-0">
+                        <Eye size={12}/>
+                        <p className="text-sm text-secondary font-jetbrains-mono">{views.toLocaleString()}</p>
+                    </div>
+                </div>
+                <div className="flex flex-wrap gap-2 cursor-default">
+                    {tags.map((tag, index) => {
+                        return <Badge className="font-jetbrains-mono whitespace-nowrap" key={index}>{tag}</Badge>
+                    })}
+                </div>
+            </div>
         </Link>
     )
 }

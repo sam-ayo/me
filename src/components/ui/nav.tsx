@@ -1,8 +1,9 @@
 "use client";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Menu,X, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const Theme = () => {
  const { theme, setTheme } = useTheme();
@@ -103,19 +104,51 @@ const Socials = () => {
  );
 };
 
+
 const Nav = () => {
+ const [isMenuOpen, setIsMenuOpen] = useState(false);
+
  return (
-  <nav className="sticky top-0 w-full flex item-end justify-between py-4 bg-background backdrop-blur-md text-primary z-[9999] border-b">
-   <Logo/>
-   <div className="flex gap-8">
-   <div className="flex items-end gap-8">
-    <Theme />
-    <NavItem text="about" />
-    <NavItem text="projects" />
+  <nav className="sticky top-0 w-full flex flex-col bg-background backdrop-blur-md text-primary z-[9999] border-b">
+   <div className="flex justify-between items-center py-4 px-4 md:px-0">
+    <Logo />
+
+    {/* Hamburger menu for mobile */}
+    <button 
+      className="md:hidden"
+      onClick={() => setIsMenuOpen(!isMenuOpen)}
+    >
+      {isMenuOpen ? (
+        <X className="h-6 w-6" /> 
+      ) : (
+        <Menu className="h-6 w-6" /> 
+      )}
+    </button>
+    {/* Desktop menu */}
+    <div className="hidden md:flex gap-8">
+      <div className="flex items-end gap-8">
+        <Theme />
+        <NavItem text="about" />
+        <NavItem text="projects" />
+      </div>
+      <Socials />
+    </div>
    </div>
-   <Socials />
+
+   {/* Mobile menu */}
+   <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+     isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+   }`}>
+     <div className="flex items-center justify-between py-2 border-t">
+       <Theme />
+       <NavItem text="about" />
+       <NavItem text="projects" />
+       <Socials />
+     </div>
    </div>
   </nav>
  );
 };
+
+// ... existing code ...
 export { Nav };
