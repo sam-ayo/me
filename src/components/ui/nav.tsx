@@ -46,9 +46,9 @@ const SocialIcon = ({
    <Image
     src={src}
     alt={alt}
-    width={24}
-    height={24}
-    className={`hover:opacity-75 transition-opacity ${
+    width="0"
+    height="0"
+    className={`w-8 h-6 hover:opacity-75 transition-opacity ${
       theme === 'light' ? 'invert' : ''
     }`}
    />
@@ -67,8 +67,10 @@ const Logo = () => {
     <Image 
     src='Logo-In-Darkmode.svg'
     alt='logo'
-    width={200}
-    height={200}
+    width="0"
+    height="0"
+    priority
+    className="w-64 h-auto"
     />
      </Link>
    ) 
@@ -109,8 +111,8 @@ const Nav = () => {
  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
  return (
-  <nav className="sticky top-0 w-full flex flex-col bg-background backdrop-blur-md text-primary z-[9999] border-b">
-   <div className="flex justify-between items-center py-4 px-4 md:px-0">
+  <nav className="sticky top-0 w-full flex flex-col bg-background backdrop-blur-md text-primary z-[9999] border-b mb-8">
+   <div className="flex justify-between items-center py-4 md:px-0">
     <Logo />
 
     {/* Hamburger menu for mobile */}
@@ -150,5 +152,4 @@ const Nav = () => {
  );
 };
 
-// ... existing code ...
 export { Nav };
