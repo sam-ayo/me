@@ -3,11 +3,11 @@ title: 'modern CSS: embracing container queries'
 tags: ['css', 'frontend', 'responsive']
 date: 2014-01-01
 ---
-**Modern CSS: Embracing Container Queries**  
+# Modern CSS: Embracing Container Queries
 
 The world of web development is constantly evolving, and CSS is no exception. For years, developers have relied on media queries to create responsive designs that adapt to different screen sizes. While media queries have been a game-changer, they come with limitations—especially when it comes to creating truly modular and reusable components. Enter **Container Queries**, a revolutionary feature in modern CSS that is changing the way we think about responsive design.  
 
-### What Are Container Queries?  
+## What Are Container Queries?  
 
 Container queries allow developers to apply styles to an element based on the size of its *container* rather than the size of the *viewport*. This means that components can now be designed to adapt to their own context, making them more flexible and reusable across different parts of a website.  
 
@@ -43,7 +43,7 @@ Here’s a simple example:
 }
 ```  
 
-In this example, the `.card` component will switch to a flexbox layout when its container (`.card-container`) is at least 400px wide.  
+In this example, the `.card` component will switch to a flexbox layout when its container `(.card-container)` is at least 400px wide.  
 
 ### Browser Support and Fallbacks  
 
