@@ -8,7 +8,7 @@ import { useState } from "react";
 const Theme = () => {
  const { theme, setTheme } = useTheme();
  const changeTheme = () => {
-  const newTheme = theme == "light" ? "dark" : "light";
+  const newTheme = theme == "dark" ? "dark" : "dark";
   setTheme(newTheme);
  };
  return (
