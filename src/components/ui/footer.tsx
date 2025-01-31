@@ -6,7 +6,7 @@ const Footer = ({className}: {className?: string}) => {
             Copyright &#169; {new Date().getFullYear()} Samuel Adeoye
         </div>
         <div>
-        <a href="https://github/sam-ayo/me" className="hover:underline">Source</a>
+        <a href="https://github.com/sam-ayo/me" className="hover:underline">Source</a>
         </div>
         </footer>
     )
