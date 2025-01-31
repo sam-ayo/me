@@ -12,7 +12,7 @@ const PostPreview = ({id, title, tags, views }: {id: string, title: string, tags
         <Link href={`${id}`}>
             <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-start gap-4">
-                    <p className="group-hover:underline cursor-pointer font-menlo">{title}</p>
+                    <p className="group-hover:underline cursor-pointer">{title}</p>
                     <div className="flex items-center gap-1 shrink-0">
                         <Eye size={12}/>
                         <p className="text-sm text-secondary font-jetbrains-mono">{views.toLocaleString()}</p>
@@ -29,24 +29,28 @@ const PostPreview = ({id, title, tags, views }: {id: string, title: string, tags
 }
 
 const YearPreviews = ({yearPreviews}: {yearPreviews: YearPosts}) => {
-    const [isOpen, setIsOpen] = useState(false);
     const currentYear = new Date().getFullYear()
-
-    useEffect(() => {
-        const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
-        if (saved !== null) {
-            setIsOpen(saved === 'true');
-        } else {
-            setIsOpen(yearPreviews.year === currentYear);
+    const [isOpen, setIsOpen] = useState(() => {
+        // Only run this on client-side
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+            if (saved !== null) {
+                return saved === 'true';
+            }
+            return yearPreviews.year === currentYear;
         }
-    }, [yearPreviews.year, currentYear]);
+        return yearPreviews.year === currentYear;
+    });
 
     useEffect(() => {
         localStorage.setItem(`yearPreview_${yearPreviews.year}`, String(isOpen));
     }, [isOpen, yearPreviews.year]);
+    
+
+    console.log('isOpen', isOpen);
 
     return(
-        <div className="mt-16 flex flex-col gap-4">
+        <div className="mt-8 flex flex-col gap-4">
             <div 
                 className="text-lg text-secondary font-jetbrains-mono cursor-pointer hover:opacity-80"
                 onClick={() => setIsOpen(!isOpen)}
@@ -55,7 +59,7 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPosts}) => {
                 {yearPreviews.year}
                 <motion.div
                     animate={{ rotate: isOpen ? 0 : -90 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.2 }}
                 >
                     <ChevronDown size={16} />
                 </motion.div>
@@ -67,18 +71,24 @@ const YearPreviews = ({yearPreviews}: {yearPreviews: YearPosts}) => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="flex flex-col"
+                        transition={{ duration: 0.2}}
                     >
+                    <div className="flex flex-col">
+                        <div className="border-b transition-all" />
                         {yearPreviews.posts.map(({id, title, tags, views}, index) => {
                             return (
-                                <div key={index}>
-                                    <div className={`group hover:bg-accent/10 px-2 py-3 border-b-2 ${index === 0 ? 'border-t-2' : 'border-b-2'}`}>
+                                <div key={index} className="group hover:bg-accent/10">
+                                    <div className="px-2 py-3">
                                         <PostPreview id={id} title={title} tags={tags} views={views}/>
                                     </div>
+                                    {index < yearPreviews.posts.length - 1 && (
+                                        <div className="border-b transition-all group-hover:border-transparent" />
+                                    )}
                                 </div>
                             )
                         })}
+                        <div className="border-b transition-all" />
+                    </div>
                     </motion.div>
                 )}
             </AnimatePresence>

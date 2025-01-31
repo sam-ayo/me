@@ -14,7 +14,7 @@ import { tags } from "./html-tag-styles";
 
    
   return (
-    <div className="text-md font-jetbrains-mono prose prose-neutral dark:prose-invert max-w-none">
+    <div className="text-md font-menlo prose prose-neutral dark:prose-invert max-w-none">
       <Markdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}

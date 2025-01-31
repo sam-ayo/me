@@ -24,9 +24,11 @@ const Theme = () => {
 
 const NavItem = ({text}:{text: string}) => {
  return (
+  <Link href={`/${text}`}>
   <p className="text-md cursor-pointer hover:opacity-75 hover:underline font-jetbrains-mono">
    {text}
   </p>
+  </Link>
  );
 };
 
