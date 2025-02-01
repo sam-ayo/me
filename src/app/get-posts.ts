@@ -17,7 +17,7 @@ const getPostPreview = async () => {
 
   let viewsById: { [key: string]: number } = {};
 
-  if (process.env.NODE_ENV !== 'production' || typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
     const viewPromises = allPosts.map((p) =>
       axios.get(`${process.env.BASE_URL}/api/views`, {
         params: { postId: p.id },
@@ -58,10 +58,7 @@ const getPost = async ({ postId }: { postId: string[] }) => {
 
   let views = 0;
   try {
-    if (
-      process.env.NODE_ENV !== 'production' ||
-      typeof window !== 'undefined'
-    ) {
+    if (typeof window !== 'undefined') {
       const response = await axios.get(`${process.env.BASE_URL}/api/views`, {
         params: { postId: post.id },
       });
