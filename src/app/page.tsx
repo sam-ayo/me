@@ -1,8 +1,14 @@
 import { YearPreviews } from '@/components/ui/post-preview';
-import { getPostPreview } from './get-posts';
+import { YearPosts } from './(post)/Post';
 
 export default async function Home() {
-  const allPosts = await getPostPreview();
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`);
+
+  if (!res.ok) {
+    return <div>Failed to get post</div>;
+  }
+
+  const allPosts = (await res.json()) as YearPosts[];
   return (
     <>
       {allPosts.map((yearPreview, index) => {
@@ -11,3 +17,5 @@ export default async function Home() {
     </>
   );
 }
+
+export const dynamic = 'force-dynamic';

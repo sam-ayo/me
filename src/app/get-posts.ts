@@ -15,23 +15,19 @@ const getPostPreview = async () => {
     {} as Record<string, typeof allPosts>,
   );
 
-  let viewsById: { [key: string]: number } = {};
+  const viewPromises = allPosts.map((p) =>
+    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/views`, {
+      params: { postId: p.id },
+    }),
+  );
 
-  if (typeof window !== 'undefined') {
-    const viewPromises = allPosts.map((p) =>
-      axios.get(`${process.env.BASE_URL}/api/views`, {
-        params: { postId: p.id },
-      }),
-    );
-
-    const viewResponses = await Promise.all(viewPromises);
-    viewsById = Object.fromEntries(
-      viewResponses.map((response, index) => [
-        allPosts[index].id,
-        response.data.noOfViews,
-      ]),
-    );
-  }
+  const viewResponses = await Promise.all(viewPromises);
+  const viewsById = Object.fromEntries(
+    viewResponses.map((response, index) => [
+      allPosts[index].id,
+      response.data.noOfViews,
+    ]),
+  );
 
   const posts: YearPosts[] = Object.entries(postsByYear).map(
     ([year, yearPosts]) => ({
@@ -49,24 +45,20 @@ const getPostPreview = async () => {
   return posts.sort((a, b) => b.year - a.year);
 };
 
-const getPost = async ({ postId }: { postId: string[] }) => {
-  const post = allPosts.find((p) => p.id === postId.join('/'));
+const getPost = async ({ postId }: { postId: string }) => {
+  const post = allPosts.find((p) => p.id === postId);
 
   if (!post) {
     throw new Error('Post not found');
   }
 
-  let views = 0;
-  try {
-    if (typeof window !== 'undefined') {
-      const response = await axios.get(`${process.env.BASE_URL}/api/views`, {
-        params: { postId: post.id },
-      });
-      views = response.data.noOfViews ?? 0;
-    }
-  } catch (error) {
-    console.warn('Failed to fetch view count:', error);
-  }
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/views`,
+    {
+      params: { postId: post.id },
+    },
+  );
+  const views = response.data.noOfViews ?? 0;
 
   return {
     ...post,
