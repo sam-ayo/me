@@ -15,19 +15,23 @@ const getPostPreview = async () => {
     {} as Record<string, typeof allPosts>,
   );
 
-  const viewPromises = allPosts.map((p) =>
-    axios.get(`${process.env.BASE_URL}/api/views`, {
-      params: { postId: p.id },
-    }),
-  );
+  let viewsById: { [key: string]: number } = {};
 
-  const viewResponses = await Promise.all(viewPromises);
-  const viewsById = Object.fromEntries(
-    viewResponses.map((response, index) => [
-      allPosts[index].id,
-      response.data.noOfViews,
-    ]),
-  );
+  if (process.env.NODE_ENV !== 'production' || typeof window !== 'undefined') {
+    const viewPromises = allPosts.map((p) =>
+      axios.get(`${process.env.BASE_URL}/api/views`, {
+        params: { postId: p.id },
+      }),
+    );
+
+    const viewResponses = await Promise.all(viewPromises);
+    viewsById = Object.fromEntries(
+      viewResponses.map((response, index) => [
+        allPosts[index].id,
+        response.data.noOfViews,
+      ]),
+    );
+  }
 
   const posts: YearPosts[] = Object.entries(postsByYear).map(
     ([year, yearPosts]) => ({
@@ -52,13 +56,24 @@ const getPost = async ({ postId }: { postId: string[] }) => {
     throw new Error('Post not found');
   }
 
-  const response = await axios.get(`${process.env.BASE_URL}/api/views`, {
-    params: { postId: post.id },
-  });
+  let views = 0;
+  try {
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      typeof window !== 'undefined'
+    ) {
+      const response = await axios.get(`${process.env.BASE_URL}/api/views`, {
+        params: { postId: post.id },
+      });
+      views = response.data.noOfViews ?? 0;
+    }
+  } catch (error) {
+    console.warn('Failed to fetch view count:', error);
+  }
 
   return {
     ...post,
-    views: response.data.noOfViews,
+    views,
   };
 };
 

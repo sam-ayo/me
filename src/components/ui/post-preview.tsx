@@ -1,10 +1,10 @@
-"use client";
-import { ChevronDown, Eye } from "lucide-react";
-import { Badge } from "./badge";
-import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
-import { YearPosts } from "@/app/(post)/Post";
-import Link from "next/link";
+'use client';
+import { ChevronDown, Eye } from 'lucide-react';
+import { Badge } from './badge';
+import { motion, AnimatePresence } from 'motion/react';
+import { useEffect, useState } from 'react';
+import { YearPosts } from '@/app/(post)/Post';
+import Link from 'next/link';
 
 const PostPreview = ({
   id,
@@ -25,7 +25,7 @@ const PostPreview = ({
           <div className="flex items-center gap-1 shrink-0">
             <Eye size={12} />
             <p className="text-sm text-secondary font-jetbrains-mono">
-              {views.toLocaleString()}
+              {(views ?? 0).toLocaleString()}
             </p>
           </div>
         </div>
@@ -50,10 +50,10 @@ const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
   const currentYear = new Date().getFullYear();
   const [isOpen, setIsOpen] = useState(() => {
     // Only run this on client-side
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
       if (saved !== null) {
-        return saved === "true";
+        return saved === 'true';
       }
       return yearPreviews.year === currentYear;
     }
@@ -84,7 +84,7 @@ const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
         {isOpen && yearPreviews.posts.length > 0 && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
