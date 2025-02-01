@@ -1,10 +1,8 @@
 ---
-title: "rust vs go: choosing your systems language"
-tags: ["rust", "go", "systems"]
+title: 'rust vs go: choosing your systems language'
+tags: ['rust', 'go', 'systems']
 date: 2014-01-01
 ---
-
-# Rust vs Go: Choosing Your Systems Language
 
 Rust and Go are two modern systems programming languages that offer unique advantages. Choosing between them depends on your project’s needs.
 
