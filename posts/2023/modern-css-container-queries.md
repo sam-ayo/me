@@ -1,10 +1,8 @@
 ---
-title: "modern CSS: embracing container queries"
-tags: ["css", "frontend", "responsive"]
+title: 'modern CSS: embracing container queries'
+tags: ['css', 'frontend', 'responsive']
 date: 2014-01-01
 ---
-
-# Modern CSS: Embracing Container Queries
 
 The world of web development is constantly evolving, and CSS is no exception. For years, developers have relied on media queries to create responsive designs that adapt to different screen sizes. While media queries have been a game-changer, they come with limitations—especially when it comes to creating truly modular and reusable components. Enter **Container Queries**, a revolutionary feature in modern CSS that is changing the way we think about responsive design.
 
