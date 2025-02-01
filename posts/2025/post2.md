@@ -1,6 +1,6 @@
 ---
-title: 'the art of technical writing'
-tags: ['writing', 'documentation', 'communication']
+title: "the art of technical writing"
+tags: ["writing", "documentation", "communication"]
 date: 2014-01-01
 ---
 

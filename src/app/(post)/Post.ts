@@ -1,21 +1,20 @@
 export interface Post {
-    title: string;
-    tags: string[];
-    date: Date;
-    content: string;
-    views: number;
+  title: string;
+  tags: string[];
+  date: Date;
+  content: string;
+  views: number;
 }
 
 export interface PostPreview {
-    title: string;
-    id:  string;
-    tags: string[];
-    date: Date;
-    views: number;
+  title: string;
+  id: string;
+  tags: string[];
+  date: Date;
+  views: number;
 }
 
-
 export interface YearPosts {
-    year: number;
-    posts: PostPreview[]
+  year: number;
+  posts: PostPreview[];
 }
