@@ -1,10 +1,8 @@
-"use client";
+import { YearPreviews } from '@/components/ui/post-preview';
+import { getPostPreview } from './get-posts';
 
-import { YearPreviews } from "@/components/ui/post-preview";
-import { getPostPreview } from "./get-posts";
-
-export default function Home() {
-  const allPosts = getPostPreview();
+export default async function Home() {
+  const allPosts = await getPostPreview();
   return (
     <>
       {allPosts.map((yearPreview, index) => {

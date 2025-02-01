@@ -1,37 +1,65 @@
-import { allPosts } from "content-collections";
-import { PostPreview, YearPosts } from "./(post)/Post";
+import { allPosts } from 'content-collections';
+import { YearPosts } from './(post)/Post';
+import axios from 'axios';
 
-const getPostPreview = () => {
-  const posts: YearPosts[] = [];
-  allPosts.forEach((p) => {
-    const yearPost = posts.find((post) => post.year == parseInt(p.year));
+const getPostPreview = async () => {
+  const postsByYear = allPosts.reduce(
+    (acc, p) => {
+      const year = p.year;
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(p);
+      return acc;
+    },
+    {} as Record<string, typeof allPosts>,
+  );
 
-    const post: PostPreview = {
-      title: p.title,
-      id: p.id,
-      tags: p.tags,
-      date: p.date,
-      views: 1222,
-    };
+  const viewPromises = allPosts.map((p) =>
+    axios.get(`${process.env.BASE_URL}/api/views`, {
+      params: { postId: p.id },
+    }),
+  );
 
-    if (!yearPost) {
-      posts.push({
-        year: parseInt(p.year, 10),
-        posts: [post],
-      });
-    } else {
-      yearPost.posts.push(post);
-    }
-  });
-  posts.sort((a, b) => b.year - a.year);
-  return posts;
+  const viewResponses = await Promise.all(viewPromises);
+  const viewsById = Object.fromEntries(
+    viewResponses.map((response, index) => [
+      allPosts[index].id,
+      response.data.noOfViews,
+    ]),
+  );
+
+  const posts: YearPosts[] = Object.entries(postsByYear).map(
+    ([year, yearPosts]) => ({
+      year: parseInt(year),
+      posts: yearPosts.map((p) => ({
+        title: p.title,
+        id: p.id,
+        tags: p.tags,
+        date: p.date,
+        views: viewsById[p.id],
+      })),
+    }),
+  );
+
+  return posts.sort((a, b) => b.year - a.year);
 };
 
-const getPost = ({ postId }: { postId: string[] }) => {
-  const post = allPosts.find((p) => {
-    return p.id.replace("/", "") === postId.join("");
+const getPost = async ({ postId }: { postId: string[] }) => {
+  const post = allPosts.find((p) => p.id === postId.join('/'));
+
+  if (!post) {
+    throw new Error('Post not found');
+  }
+
+  const response = await axios.get(`${process.env.BASE_URL}/api/views`, {
+    params: { postId: post.id },
   });
-  return post;
+
+  return {
+    ...post,
+    views: response.data.noOfViews,
+  };
 };
 
 export { getPostPreview, getPost };
