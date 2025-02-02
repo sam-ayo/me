@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useViews } from '@/hooks/use-views';
+import { useEffect, useRef, useState } from 'react';
 
 export interface PostContent {
   id: string;
@@ -37,25 +38,49 @@ export const Header = ({ post }: { post: PostContent }) => {
           <span>{post.date?.toDateString()}</span>
         </span>
         <span className="pr-1.5">
-          <Views defaultValue={post.views} />
+          <Views defaultValue={post.views} postId={post.id} />
         </span>
       </p>
     </>
   );
 };
 
-function Views({ defaultValue }: { defaultValue: number }) {
-  const views = defaultValue;
+function Views({
+  defaultValue,
+  postId,
+}: {
+  defaultValue: number;
+  postId: string;
+}) {
+  const { mutate, data, isSuccess } = useViews();
   const didLogViewRef = useRef(false);
+  const [views, setViews] = useState(defaultValue);
 
   useEffect(() => {
-    if ('development' === process.env.NODE_ENV) return;
+    if (isSuccess) {
+      setViews(() => data.data.message);
+    }
+  }, [data, isSuccess]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      return;
+    }
     if (!didLogViewRef.current) {
+      // update views count optimistically
+      setViews((prev) => prev + 1);
+      mutate(postId);
       didLogViewRef.current = true;
     }
-  });
+  }, [postId, mutate]);
 
   return (
-    <>{views != null ? <span>{views.toLocaleString()} views</span> : null}</>
+    <>
+      {views != null ? (
+        <span>
+          {views.toLocaleString()} {views == 1 ? 'view' : 'views'}
+        </span>
+      ) : null}
+    </>
   );
 }
