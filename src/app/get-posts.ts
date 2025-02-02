@@ -1,6 +1,6 @@
 import { allPosts } from 'content-collections';
 import { YearPosts } from './(post)/Post';
-import axios from 'axios';
+import { cacheClient } from '../../redis';
 
 const getPostPreview = async () => {
   const postsByYear = allPosts.reduce(
@@ -15,18 +15,13 @@ const getPostPreview = async () => {
     {} as Record<string, typeof allPosts>,
   );
 
-  const viewPromises = allPosts.map((p) =>
-    axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/views`, {
-      params: { postId: p.id },
-    }),
+  const viewPromises = allPosts.map(
+    (p) => cacheClient.get(p.id) as Promise<number>,
   );
 
   const viewResponses = await Promise.all(viewPromises);
   const viewsById = Object.fromEntries(
-    viewResponses.map((response, index) => [
-      allPosts[index].id,
-      response.data.noOfViews,
-    ]),
+    viewResponses.map((response, index) => [allPosts[index].id, response ?? 0]),
   );
 
   const posts: YearPosts[] = Object.entries(postsByYear).map(
@@ -52,13 +47,7 @@ const getPost = async ({ postId }: { postId: string }) => {
     throw new Error('Post not found');
   }
 
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/views`,
-    {
-      params: { postId: post.id },
-    },
-  );
-  const views = response.data.noOfViews ?? 0;
+  const views = ((await cacheClient.get(post.id)) as number) ?? 0;
 
   return {
     ...post,
