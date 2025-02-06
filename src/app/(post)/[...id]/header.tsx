@@ -35,7 +35,7 @@ export const Header = ({ post }: { post: PostContent }) => {
             <span className="mx-2">|</span>
           </span>
 
-          <span>{post.date?.toDateString()}</span>
+          <span>{post.date.toDateString()}</span>
         </span>
         <span className="pr-1.5">
           <Views defaultValue={post.views} postId={post.id} />
