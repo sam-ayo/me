@@ -3,6 +3,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { tags } from './html-tag-styles';
 import { Header, PostContent } from './header';
+import { ScrollSpy } from '@/components/scroll-spy';
 
 export default async function Page({
   params,
@@ -25,15 +26,19 @@ export default async function Page({
   }
 
   return (
-    <div className="text-md font-menlo prose prose-neutral dark:prose-invert max-w-none">
-      <Header post={post as PostContent} />
-      <Markdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{ ...tags }}
-      >
-        {post.content}
-      </Markdown>
+    <div className="relative">
+      <ScrollSpy contentSelector=".post-content" headingSelector="h1, h2, h3" />
+
+      <article className="text-md font-menlo prose prose-neutral dark:prose-invert max-w-none post-content">
+        <Header post={post as PostContent} />
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+          components={{ ...tags }}
+        >
+          {post.content}
+        </Markdown>
+      </article>
     </div>
   );
 }

@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Nav } from "@/components/ui/nav";
-import { JetBrains_Mono } from "next/font/google";
-import { Footer } from "@/components/ui/footer";
-import { Providers } from "@/components/ui/providers";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Nav } from '@/components/ui/nav';
+import { JetBrains_Mono } from 'next/font/google';
+import { Footer } from '@/components/ui/footer';
+import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
-  title: "Samuel Adeoye",
-  description: "Samuel Adeoye. Software engineer. Entrepreneur.",
+  title: 'Samuel Adeoye',
+  description: 'Samuel Adeoye. Software engineer. Entrepreneur.',
 };
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 });
 
 export default function RootLayout({

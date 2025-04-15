@@ -4,6 +4,7 @@ import { YearPosts } from './(post)/Post';
 export default async function Home() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`);
 
+  console.log(res);
   if (!res.ok) {
     return <div>Failed to get post</div>;
   }
