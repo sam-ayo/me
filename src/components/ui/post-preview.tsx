@@ -48,17 +48,14 @@ const PostPreview = ({
 
 const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
   const currentYear = new Date().getFullYear();
-  const [isOpen, setIsOpen] = useState(() => {
-    // Only run this on client-side
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
-      if (saved !== null) {
-        return saved === 'true';
-      }
-      return yearPreviews.year === currentYear;
+  const [isOpen, setIsOpen] = useState(yearPreviews.year === currentYear);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+    if (saved !== null) {
+      setIsOpen(saved === 'true');
     }
-    return yearPreviews.year === currentYear;
-  });
+  }, [yearPreviews.year]);
 
   useEffect(() => {
     localStorage.setItem(`yearPreview_${yearPreviews.year}`, String(isOpen));

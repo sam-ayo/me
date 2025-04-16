@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Nav } from "@/components/ui/nav";
-import { JetBrains_Mono } from "next/font/google";
-import { Footer } from "@/components/ui/footer";
-import { Providers } from "@/components/ui/providers";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Nav } from '@/components/ui/nav';
+import { JetBrains_Mono } from 'next/font/google';
+import { Footer } from '@/components/ui/footer';
+import { Providers } from '@/components/ui/providers';
 
 export const metadata: Metadata = {
-  title: "Samuel Adeoye",
-  description: "Samuel Adeoye. Software engineer. Entrepreneur.",
+  title: 'Samuel Adeoye',
+  description: 'Samuel Adeoye. Software engineer. Entrepreneur.',
 };
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-jetbrains-mono",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 });
 
 export default function RootLayout({
@@ -22,7 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      className={`${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className={`antialiased`}>
         <Providers>
           <div className="min-h-screen flex flex-col font-menlo">

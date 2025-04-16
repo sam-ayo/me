@@ -1,30 +1,12 @@
 'use client';
-import { Moon, Menu, X, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
-const Theme = () => {
-  const { theme, setTheme } = useTheme();
-  const changeTheme = () => {
-    const newTheme = theme == 'dark' ? 'dark' : 'dark';
-    setTheme(newTheme);
-  };
+const NavItem = ({ text, href }: { text: string; href?: string }) => {
   return (
-    <div onClick={changeTheme} className="cursor-pointer hover:opacity-75">
-      {theme === 'light' ? (
-        <Sun className="w-5 h-5" />
-      ) : (
-        <Moon className="w-5 h-5" />
-      )}
-    </div>
-  );
-};
-
-const NavItem = ({ text }: { text: string }) => {
-  return (
-    <Link href={`/${text}`}>
+    <Link href={href ? href : `/${text}`}>
       <p className="text-md cursor-pointer hover:opacity-75 hover:underline font-jetbrains-mono">
         {text}
       </p>
@@ -41,7 +23,6 @@ const SocialIcon = ({
   alt: string;
   link: string;
 }) => {
-  const { theme } = useTheme();
   return (
     <a href={link} target="_blank">
       <Image
@@ -49,18 +30,15 @@ const SocialIcon = ({
         alt={alt}
         width="0"
         height="0"
-        className={`w-8 h-6 hover:opacity-75 transition-opacity ${
-          theme === 'light' ? 'invert' : ''
-        }`}
+        className={`w-8 h-6 hover:opacity-75 transition-opacity`}
       />
     </a>
   );
 };
 
 const Logo = () => {
-  const { theme } = useTheme();
   return (
-    <Link className={`self-end ${theme === 'light' ? 'invert' : ''}`} href="/">
+    <Link className={`self-end`} href="/">
       <Image
         src="Logo-In-Darkmode.svg"
         alt="logo"
@@ -74,24 +52,15 @@ const Logo = () => {
 };
 
 const Socials = () => {
-  const { theme } = useTheme();
   return (
     <div className="flex flex-col items-center gap-3">
       <p className="text-sm text-gray-500 dark:text-gray-400">follow mee :))</p>
       <div className="flex gap-2">
-        {theme === 'light' ? (
-          <SocialIcon
-            src="GitHub-In-Lightmode.svg"
-            alt="github.com"
-            link="https://github.com/sam-ayo"
-          />
-        ) : (
-          <SocialIcon
-            src="GitHub-In-Darkmode.svg"
-            alt="github.com"
-            link="https://github.com/sam-ayo"
-          />
-        )}
+        <SocialIcon
+          src="GitHub-In-Darkmode.svg"
+          alt="github.com"
+          link="https://github.com/sam-ayo"
+        />
         <SocialIcon
           src="X-In-Darkmode.svg"
           alt="x.com"
@@ -129,9 +98,12 @@ const Nav = () => {
         {/* Desktop menu */}
         <div className="hidden md:flex gap-8">
           <div className="flex items-end gap-8">
-            <Theme />
             <NavItem text="about" />
             <NavItem text="projects" />
+            <NavItem
+              text="resume"
+              href="https://sxjmzwhnwwdkdcvtgefq.supabase.co/storage/v1/object/public/resume//Samuel%20Adeoye%20Resume.pdf"
+            />
           </div>
           <Socials />
         </div>
@@ -144,9 +116,12 @@ const Nav = () => {
         }`}
       >
         <div className="flex items-center justify-between py-2 border-t">
-          <Theme />
           <NavItem text="about" />
           <NavItem text="projects" />
+          <NavItem
+            text="resume"
+            href="https://sxjmzwhnwwdkdcvtgefq.supabase.co/storage/v1/object/public/resume//Samuel%20Adeoye%20Resume.pdf"
+          />
           <Socials />
         </div>
       </div>
