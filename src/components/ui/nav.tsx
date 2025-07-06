@@ -76,6 +76,9 @@ const Socials = () => {
   );
 };
 
+const RESUME_URL =
+  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyAAAuwFELNba7fRgrhB60upKUcjzmiWVMEQIF';
+
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -100,10 +103,7 @@ const Nav = () => {
           <div className="flex items-end gap-8">
             <NavItem text="about" />
             <NavItem text="projects" />
-            <NavItem
-              text="resume"
-              href="https://sxjmzwhnwwdkdcvtgefq.supabase.co/storage/v1/object/public/resume//Samuel%20Adeoye%20Resume.pdf"
-            />
+            <NavItem text="resume" href={RESUME_URL} />
           </div>
           <Socials />
         </div>
@@ -118,10 +118,7 @@ const Nav = () => {
         <div className="flex items-center justify-between py-2 border-t">
           <NavItem text="about" />
           <NavItem text="projects" />
-          <NavItem
-            text="resume"
-            href="https://sxjmzwhnwwdkdcvtgefq.supabase.co/storage/v1/object/public/resume//Samuel%20Adeoye%20Resume.pdf"
-          />
+          <NavItem text="resume" href={RESUME_URL} />
           <Socials />
         </div>
       </div>
