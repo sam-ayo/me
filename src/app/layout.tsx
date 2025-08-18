@@ -6,7 +6,7 @@ import { Footer } from '@/components/ui/footer';
 import { Providers } from '@/components/ui/providers';
 
 export const metadata: Metadata = {
-  title: 'Samuel Adeoye',
+  title: 'Samuel | Adeoye',
   description: 'Samuel Adeoye. Software engineer. Entrepreneur.',
 };
 

@@ -3,6 +3,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { tags } from './html-tag-styles';
 import { Header, PostContent } from './header';
+import NavPill from '@/components/nav-pill';
 
 export default async function Page({
   params,
@@ -25,7 +26,8 @@ export default async function Page({
   }
 
   return (
-    <div className="text-md font-menlo prose prose-neutral dark:prose-invert max-w-none">
+    <div className="text-md font-menlo prose prose-neutral dark:prose-invert">
+      <NavPill />
       <Header post={post as PostContent} />
       <Markdown
         remarkPlugins={[remarkGfm]}

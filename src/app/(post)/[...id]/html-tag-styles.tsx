@@ -24,7 +24,7 @@ const tags: Components = {
   },
   p: ({ children, ...props }) => {
     return (
-      <p className="my-4 [blockquote_&]:my-2" {...props}>
+      <p className="my-4 [blockquote_&]:my-2 text-base/7" {...props}>
         {children}
       </p>
     );
