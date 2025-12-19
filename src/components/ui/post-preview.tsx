@@ -119,25 +119,27 @@ const YearPreviews = ({
           >
             <div className="flex flex-col">
               <div className="border-b transition-all" />
-              {yearPreviews.posts.map(({ id, title, tags, views, date }, index) => {
-                return (
-                  <div key={index} className="group hover:bg-accent/10">
-                    <div className="px-2 py-3">
-                      <PostPreview
-                        id={id}
-                        title={title}
-                        tags={tags}
-                        views={views}
-                        date={date}
-                        isLatest={isCurrentYear && index === 0}
-                      />
+              {yearPreviews.posts.map(
+                ({ id, title, tags, views, date }, index) => {
+                  return (
+                    <div key={index} className="group hover:bg-accent/10">
+                      <div className="px-2 py-3">
+                        <PostPreview
+                          id={id}
+                          title={title}
+                          tags={tags}
+                          views={views}
+                          date={date}
+                          isLatest={isCurrentYear && index === 0}
+                        />
+                      </div>
+                      {index < yearPreviews.posts.length - 1 && (
+                        <div className="border-b transition-all group-hover:border-transparent" />
+                      )}
                     </div>
-                    {index < yearPreviews.posts.length - 1 && (
-                      <div className="border-b transition-all group-hover:border-transparent" />
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                },
+              )}
               <div className="border-b transition-all" />
             </div>
           </motion.div>
