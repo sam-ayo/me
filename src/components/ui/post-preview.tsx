@@ -1,32 +1,58 @@
 'use client';
-import { ChevronDown, Eye } from 'lucide-react';
+import { ChevronDown, Eye, Calendar } from 'lucide-react';
 import { Badge } from './badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { YearPosts } from '@/app/(post)/Post';
 import Link from 'next/link';
 
+const formatDate = (date: Date) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 const PostPreview = ({
   id,
   title,
   tags,
   views,
+  date,
+  isLatest,
 }: {
   id: string;
   title: string;
   tags: string[];
   views: number;
+  date: Date;
+  isLatest?: boolean;
 }) => {
   return (
     <Link href={`${id}`}>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-start gap-4">
-          <p className="group-hover:underline cursor-pointer">{title}</p>
-          <div className="flex items-center gap-1 shrink-0">
-            <Eye size={12} />
-            <p className="text-sm text-secondary font-jetbrains-mono">
-              {(views ?? 0).toLocaleString()}
-            </p>
+          <div className="flex items-center gap-2">
+            <p className="group-hover:underline cursor-pointer">{title}</p>
+            {isLatest && (
+              <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-emerald-500/20 text-emerald-400 rounded font-jetbrains-mono">
+                new
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-1">
+              <Calendar size={10} className="text-secondary" />
+              <p className="text-xs text-secondary font-jetbrains-mono">
+                {formatDate(date)}
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              <Eye size={12} />
+              <p className="text-sm text-secondary font-jetbrains-mono">
+                {(views ?? 0).toLocaleString()}
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex flex-wrap gap-2 cursor-default">
@@ -46,7 +72,13 @@ const PostPreview = ({
   );
 };
 
-const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
+const YearPreviews = ({
+  yearPreviews,
+  isCurrentYear,
+}: {
+  yearPreviews: YearPosts;
+  isCurrentYear?: boolean;
+}) => {
   const currentYear = new Date().getFullYear();
   const [isOpen, setIsOpen] = useState(yearPreviews.year === currentYear);
 
@@ -87,7 +119,7 @@ const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
           >
             <div className="flex flex-col">
               <div className="border-b transition-all" />
-              {yearPreviews.posts.map(({ id, title, tags, views }, index) => {
+              {yearPreviews.posts.map(({ id, title, tags, views, date }, index) => {
                 return (
                   <div key={index} className="group hover:bg-accent/10">
                     <div className="px-2 py-3">
@@ -96,6 +128,8 @@ const YearPreviews = ({ yearPreviews }: { yearPreviews: YearPosts }) => {
                         title={title}
                         tags={tags}
                         views={views}
+                        date={date}
+                        isLatest={isCurrentYear && index === 0}
                       />
                     </div>
                     {index < yearPreviews.posts.length - 1 && (

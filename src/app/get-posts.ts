@@ -27,13 +27,17 @@ const getPostPreview = async () => {
   const posts: YearPosts[] = Object.entries(postsByYear).map(
     ([year, yearPosts]) => ({
       year: parseInt(year),
-      posts: yearPosts.map((p) => ({
-        title: p.title,
-        id: p.id,
-        tags: p.tags,
-        date: p.date,
-        views: viewsById[p.id],
-      })),
+      posts: yearPosts
+        .map((p) => ({
+          title: p.title,
+          id: p.id,
+          tags: p.tags,
+          date: p.date,
+          views: viewsById[p.id],
+        }))
+        .sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        ),
     }),
   );
 

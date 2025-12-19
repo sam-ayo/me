@@ -12,7 +12,13 @@ export default async function Home() {
   return (
     <>
       {allPosts.map((yearPreview, index) => {
-        return <YearPreviews key={index} yearPreviews={yearPreview} />;
+        return (
+          <YearPreviews
+            key={index}
+            yearPreviews={yearPreview}
+            isCurrentYear={index === 0}
+          />
+        );
       })}
     </>
   );
