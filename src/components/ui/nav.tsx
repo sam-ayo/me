@@ -77,7 +77,7 @@ const Socials = () => {
 };
 
 const RESUME_URL =
-  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyAAAuwFELNba7fRgrhB60upKUcjzmiWVMEQIF';
+  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyWKAa8Lyd2z8Edin6TqtMFZyQLwOxobNpXPVf';
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
