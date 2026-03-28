@@ -4,6 +4,7 @@ import { Nav } from '@/components/ui/nav';
 import { JetBrains_Mono } from 'next/font/google';
 import { Footer } from '@/components/ui/footer';
 import { Providers } from '@/components/ui/providers';
+import { SwipeNavigator } from '@/components/ui/swipe-navigator';
 
 export const metadata: Metadata = {
   title: 'Samuel | Adeoye',
@@ -35,9 +36,11 @@ export default function RootLayout({
                 <Nav />
               </div>
             </div>
-            <div className="mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8 flex-grow">
-              {children}
-            </div>
+            <SwipeNavigator>
+              <div className="mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8 flex-grow overflow-hidden">
+                {children}
+              </div>
+            </SwipeNavigator>
             <Footer className="font-menlo text-secondary m-4 mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8" />
           </div>
         </Providers>

@@ -1,10 +1,9 @@
 'use client';
-import { Menu, X } from 'lucide-react';
 import { LayoutGroup, motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const NavItem = ({
   text,
@@ -27,11 +26,12 @@ const NavItem = ({
       className="relative"
     >
       <p
-        className={`text-md cursor-pointer hover:opacity-75 font-jetbrains-mono ${
+        className={`text-sm md:text-base cursor-pointer hover:opacity-75 font-jetbrains-mono ${
           isActive ? 'font-bold' : ''
         }`}
       >
         {text}
+        {isExternal && <span className="inline-block ml-1 text-xl">↗</span>}
       </p>
       {isActive && (
         <motion.div
@@ -82,9 +82,9 @@ const Logo = () => {
   );
 };
 
-const Socials = () => {
+const Socials = ({ compact = false }: { compact?: boolean }) => {
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className={`flex items-center gap-3 ${compact ? '' : 'flex-col'}`}>
       <p className="text-sm text-gray-500 dark:text-gray-400">follow mee :))</p>
       <div className="flex gap-2">
         <SocialIcon
@@ -117,26 +117,19 @@ const isWritingsActive = (pathname: string) => {
 };
 
 const Nav = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
   return (
-    <nav className="w-full flex flex-col text-primary border-b mb-4">
+    <nav className="w-full flex flex-col text-primary border-b">
       <div className="flex justify-between items-center py-4 md:px-0">
         <Logo />
 
-        {/* Hamburger menu for mobile */}
-        <button
-          className="md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-        {/* Desktop menu */}
+        {/* Socials beside logo on mobile */}
+        <div className="md:hidden">
+          <Socials compact />
+        </div>
+
+{/* Desktop menu */}
         <div className="hidden md:flex gap-8">
           <LayoutGroup id="desktop-nav">
             <div className="flex items-end gap-8">
@@ -164,32 +157,29 @@ const Nav = () => {
       </div>
 
       {/* Mobile menu */}
-      <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="flex items-center justify-between py-2 border-t">
+      <div className="md:hidden">
+        <div className="py-4 border-t">
           <LayoutGroup id="mobile-nav">
-            <NavItem
-              text="about"
-              href="/"
-              isActive={pathname === '/'}
-              groupId="mobile"
-            />
-            <NavItem
-              text="projects"
-              isActive={pathname.startsWith('/projects')}
-              groupId="mobile"
-            />
-            <NavItem
-              text="writings"
-              isActive={isWritingsActive(pathname)}
-              groupId="mobile"
-            />
-            <NavItem text="resume" href={RESUME_URL} groupId="mobile" />
+            <div className="flex items-center justify-between w-full">
+              <NavItem
+                text="about"
+                href="/"
+                isActive={pathname === '/'}
+                groupId="mobile"
+              />
+              <NavItem
+                text="projects"
+                isActive={pathname.startsWith('/projects')}
+                groupId="mobile"
+              />
+              <NavItem
+                text="writings"
+                isActive={isWritingsActive(pathname)}
+                groupId="mobile"
+              />
+              <NavItem text="resume" href={RESUME_URL} groupId="mobile" />
+            </div>
           </LayoutGroup>
-          <Socials />
         </div>
       </div>
     </nav>
