@@ -1,15 +1,46 @@
 'use client';
 import { Menu, X } from 'lucide-react';
+import { LayoutGroup, motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useRef, useState } from 'react';
 
-const NavItem = ({ text, href }: { text: string; href?: string }) => {
+const NavItem = ({
+  text,
+  href,
+  isActive,
+  groupId,
+}: {
+  text: string;
+  href?: string;
+  isActive?: boolean;
+  groupId: string;
+}) => {
+  const isExternal = href?.startsWith('http');
+  const underlineRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Link href={href ? href : `/${text}`}>
-      <p className="text-md cursor-pointer hover:opacity-75 hover:underline font-jetbrains-mono">
+    <Link
+      href={href ? href : `/${text}`}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="relative"
+    >
+      <p
+        className={`text-md cursor-pointer hover:opacity-75 font-jetbrains-mono ${
+          isActive ? 'font-bold' : ''
+        }`}
+      >
         {text}
       </p>
+      {isActive && (
+        <motion.div
+          ref={underlineRef}
+          layoutId={`nav-underline-${groupId}`}
+          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-current"
+          transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+        />
+      )}
     </Link>
   );
 };
@@ -77,13 +108,20 @@ const Socials = () => {
 };
 
 const RESUME_URL =
-  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyWKAa8Lyd2z8Edin6TqtMFZyQLwOxobNpXPVf';
+  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyKuzlxOYSiap4z0oTCPkRyGUmIeZXrlbvLfVY';
+
+const isWritingsActive = (pathname: string) => {
+  if (pathname.startsWith('/writings')) return true;
+  // Post pages are at /<year>/... (e.g. /2024/some-post)
+  return /^\/\d{4}\//.test(pathname);
+};
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 w-full flex flex-col bg-background backdrop-blur-md text-primary z-[9999] border-b mb-4">
+    <nav className="w-full flex flex-col text-primary border-b mb-4">
       <div className="flex justify-between items-center py-4 md:px-0">
         <Logo />
 
@@ -100,11 +138,27 @@ const Nav = () => {
         </button>
         {/* Desktop menu */}
         <div className="hidden md:flex gap-8">
-          <div className="flex items-end gap-8">
-            <NavItem text="about" />
-            <NavItem text="projects" />
-            <NavItem text="resume" href={RESUME_URL} />
-          </div>
+          <LayoutGroup id="desktop-nav">
+            <div className="flex items-end gap-8">
+              <NavItem
+                text="about"
+                href="/"
+                isActive={pathname === '/'}
+                groupId="desktop"
+              />
+              <NavItem
+                text="projects"
+                isActive={pathname.startsWith('/projects')}
+                groupId="desktop"
+              />
+              <NavItem
+                text="writings"
+                isActive={isWritingsActive(pathname)}
+                groupId="desktop"
+              />
+              <NavItem text="resume" href={RESUME_URL} groupId="desktop" />
+            </div>
+          </LayoutGroup>
           <Socials />
         </div>
       </div>
@@ -116,9 +170,25 @@ const Nav = () => {
         }`}
       >
         <div className="flex items-center justify-between py-2 border-t">
-          <NavItem text="about" />
-          <NavItem text="projects" />
-          <NavItem text="resume" href={RESUME_URL} />
+          <LayoutGroup id="mobile-nav">
+            <NavItem
+              text="about"
+              href="/"
+              isActive={pathname === '/'}
+              groupId="mobile"
+            />
+            <NavItem
+              text="projects"
+              isActive={pathname.startsWith('/projects')}
+              groupId="mobile"
+            />
+            <NavItem
+              text="writings"
+              isActive={isWritingsActive(pathname)}
+              groupId="mobile"
+            />
+            <NavItem text="resume" href={RESUME_URL} groupId="mobile" />
+          </LayoutGroup>
           <Socials />
         </div>
       </div>

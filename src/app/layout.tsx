@@ -30,8 +30,12 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <Providers>
           <div className="min-h-screen flex flex-col font-menlo">
+            <div className="sticky top-0 z-[9999] bg-background">
+              <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8">
+                <Nav />
+              </div>
+            </div>
             <div className="mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8 flex-grow">
-              <Nav />
               {children}
             </div>
             <Footer className="font-menlo text-secondary m-4 mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8" />

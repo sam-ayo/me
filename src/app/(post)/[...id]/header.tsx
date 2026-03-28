@@ -76,7 +76,7 @@ function Views({
 
   return (
     <>
-      {views != null ? (
+      {views ? (
         <span>
           {views.toLocaleString()} {views == 1 ? 'view' : 'views'}
         </span>

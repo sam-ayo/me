@@ -15,15 +15,6 @@ const getPostPreview = async () => {
     {} as Record<string, typeof allPosts>,
   );
 
-  const viewPromises = allPosts.map(
-    (p) => cacheClient.get(p.id) as Promise<number>,
-  );
-
-  const viewResponses = await Promise.all(viewPromises);
-  const viewsById = Object.fromEntries(
-    viewResponses.map((response, index) => [allPosts[index].id, response ?? 0]),
-  );
-
   const posts: YearPosts[] = Object.entries(postsByYear).map(
     ([year, yearPosts]) => ({
       year: parseInt(year),
@@ -33,7 +24,7 @@ const getPostPreview = async () => {
           id: p.id,
           tags: p.tags,
           date: p.date,
-          views: viewsById[p.id],
+          views: 0,
         }))
         .sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
@@ -42,6 +33,15 @@ const getPostPreview = async () => {
   );
 
   return posts.sort((a, b) => b.year - a.year);
+};
+
+const getPostViews = async () => {
+  const postIds = allPosts.map((p) => p.id);
+  if (postIds.length === 0) return {};
+  const viewResponses = await cacheClient.mget<(number | null)[]>(...postIds);
+  return Object.fromEntries(
+    postIds.map((id, index) => [id, viewResponses[index] ?? 0]),
+  );
 };
 
 const getPost = async ({ postId }: { postId: string }) => {
@@ -59,4 +59,4 @@ const getPost = async ({ postId }: { postId: string }) => {
   };
 };
 
-export { getPostPreview, getPost };
+export { getPostPreview, getPostViews, getPost };

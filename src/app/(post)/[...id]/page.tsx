@@ -26,7 +26,7 @@ export default async function Page({
   }
 
   return (
-    <div className="text-md font-menlo prose prose-neutral dark:prose-invert">
+    <div className="text-sm font-menlo prose prose-neutral dark:prose-invert">
       {/* <NavPill /> */}
       <Header post={post as PostContent} />
       <Markdown
