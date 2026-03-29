@@ -98,15 +98,14 @@ const YearPreviews = ({
   views: Record<string, number>;
 }) => {
   const currentYear = new Date().getFullYear();
-  const [isOpen, setIsOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
-      if (saved !== null) {
-        return saved === 'true';
-      }
+  const [isOpen, setIsOpen] = useState(yearPreviews.year === currentYear);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(`yearPreview_${yearPreviews.year}`);
+    if (saved !== null) {
+      setIsOpen(saved === 'true');
     }
-    return yearPreviews.year === currentYear;
-  });
+  }, [yearPreviews.year]);
 
   useEffect(() => {
     localStorage.setItem(`yearPreview_${yearPreviews.year}`, String(isOpen));
