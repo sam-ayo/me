@@ -48,7 +48,7 @@ const getPost = async ({ postId }: { postId: string }) => {
   const post = allPosts.find((p) => p.id === postId);
 
   if (!post) {
-    throw new Error('Post not found');
+    return null;
   }
 
   const views = ((await cacheClient.get(post.id)) as number) ?? 0;

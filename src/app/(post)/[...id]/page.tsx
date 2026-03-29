@@ -3,23 +3,22 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { tags } from './html-tag-styles';
 import { Header, PostContent } from './header';
-// import NavPill from '@/components/nav-pill';
+import { getPost } from '@/app/get-posts';
+import { allPosts } from 'content-collections';
+
+export async function generateStaticParams() {
+  return allPosts.map((post) => ({
+    id: post.id.split('/'),
+  }));
+}
 
 export default async function Page({
   params,
 }: {
   params: Promise<{ id: string[] }>;
 }) {
-  const postId = (await params).id;
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts?postId=${postId.join('/')}`,
-  );
-
-  if (!res.ok) {
-    return <div>Could not get post</div>;
-  }
-  const post = (await res.json()) as PostContent;
-  post.date = new Date(post.date);
+  const postId = (await params).id.join('/');
+  const post = await getPost({ postId });
 
   if (!post) {
     return <div className="text-center py-8">Post not found</div>;
@@ -27,7 +26,6 @@ export default async function Page({
 
   return (
     <div className="text-sm font-menlo prose prose-neutral dark:prose-invert">
-      {/* <NavPill /> */}
       <Header post={post as PostContent} />
       <Markdown
         remarkPlugins={[remarkGfm]}

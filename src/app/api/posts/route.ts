@@ -9,5 +9,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(postPreviews);
   }
   const post = await getPost({ postId });
+  if (!post) {
+    return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+  }
   return NextResponse.json(post);
 }
