@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
 export type TabName = 'about' | 'projects' | 'writings';
 
@@ -44,42 +45,30 @@ const MobileTabContext = createContext<MobileTabContextValue>({
 export function MobileTabProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTabState] = useState<TabName>('about');
   const [isTabRoute, setIsTabRoute] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  // Sync state with current URL on route changes
   useEffect(() => {
-    const tab = pathnameToTab(window.location.pathname);
+    const tab = pathnameToTab(pathname);
     if (tab) {
       setActiveTabState(tab);
       setIsTabRoute(true);
     } else {
       setIsTabRoute(false);
     }
-  }, []);
+  }, [pathname]);
 
-  const setActiveTab = useCallback((tab: TabName) => {
-    setActiveTabState(tab);
-    setIsTabRoute(true);
-    const path = TAB_PATHS[tab];
-    if (window.location.pathname !== path) {
-      window.history.pushState(null, '', path);
-    }
-  }, []);
-
-  // Handle browser back/forward
-  useEffect(() => {
-    const handlePopState = () => {
-      const tab = pathnameToTab(window.location.pathname);
-      if (tab) {
-        setActiveTabState(tab);
-        setIsTabRoute(true);
-      } else {
-        setIsTabRoute(false);
+  const setActiveTab = useCallback(
+    (tab: TabName) => {
+      setActiveTabState(tab);
+      setIsTabRoute(true);
+      const path = TAB_PATHS[tab];
+      if (pathname !== path) {
+        router.push(path);
       }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+    },
+    [pathname, router],
+  );
 
   return (
     <MobileTabContext.Provider value={{ activeTab, setActiveTab, isTabRoute }}>
