@@ -13,6 +13,9 @@ import { MobileTabLayout } from '@/components/mobile-tab-layout';
 export const metadata: Metadata = {
   title: 'Samuel | Adeoye',
   description: 'Samuel Adeoye. Software engineer. Entrepreneur.',
+  icons: {
+    icon: '/favicon.ico?v=2',
+  },
 };
 
 const jetbrainsMono = JetBrains_Mono({
