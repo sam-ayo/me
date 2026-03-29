@@ -45,7 +45,7 @@ export function MobileTabProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTabState] = useState<TabName>('about');
   const [isTabRoute, setIsTabRoute] = useState(true);
 
-  // Initialize from current URL
+  // Sync state with current URL on route changes
   useEffect(() => {
     const tab = pathnameToTab(window.location.pathname);
     if (tab) {
