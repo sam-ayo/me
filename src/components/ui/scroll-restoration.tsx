@@ -33,15 +33,12 @@ export function ScrollRestoration() {
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
 
-  // Save scroll position before navigating away
   useEffect(() => {
     const handleBeforeNav = () => {
       saveScrollPosition(prevPathname.current);
     };
 
-    // Save on any click (captures nav clicks before route change)
     document.addEventListener('click', handleBeforeNav, { capture: true });
-    // Save on swipe-triggered navigation
     window.addEventListener('beforeunload', handleBeforeNav);
 
     return () => {
@@ -50,10 +47,8 @@ export function ScrollRestoration() {
     };
   }, []);
 
-  // Restore scroll position when pathname changes
   useEffect(() => {
     if (pathname !== prevPathname.current) {
-      // Use requestAnimationFrame to ensure DOM has rendered
       requestAnimationFrame(() => {
         restoreScrollPosition(pathname);
       });
