@@ -6,7 +6,7 @@
   @font-face {
     font-family: Proxima Nova;
     font-weight: 400;
-    src: url(/fonts/Menlo/Menlo-Regular.tff) format("tff");
+    src: url(/fonts/Menlo/Menlo-Regular.ttf) format("truetype");
   }
 }
 
