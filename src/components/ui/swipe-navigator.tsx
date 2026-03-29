@@ -50,6 +50,7 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      className=""
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

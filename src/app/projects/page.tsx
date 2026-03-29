@@ -15,8 +15,7 @@ const projects: Project[] = [
   {
     id: 'rechef',
     title: 'Rechef',
-    description:
-      'Extract recipes from URLs, videos, and photos using AI.',
+    description: 'Extract recipes from URLs, videos, and photos using AI.',
     tags: ['TypeScript', 'Dart', 'PostgreSQL', 'Flutter'],
     href: 'https://apps.apple.com/us/app/rechef-recipe-manager/id6758213347',
   },
@@ -25,14 +24,21 @@ const projects: Project[] = [
     title: 'Notable AI',
     description:
       'AI meeting assistant with recording, transcription, and chat.',
-    tags: ['TypeScript', 'Dart', 'PostgreSQL', 'Vercel AI SDK', 'React', 'Electron', 'Flutter'],
+    tags: [
+      'TypeScript',
+      'Dart',
+      'PostgreSQL',
+      'Vercel AI SDK',
+      'React',
+      'Electron',
+      'Flutter',
+    ],
     href: 'https://www.notableai.ca',
   },
   {
     id: 'clonetray',
     title: 'CloneTray',
-    description:
-      'Clone Git repos from the macOS menu bar.',
+    description: 'Clone Git repos from the macOS menu bar.',
     tags: ['Python', 'Shell', 'macOS', 'Homebrew'],
     href: 'https://github.com/sam-ayo/clonetray',
     github: 'https://github.com/sam-ayo/clonetray',
@@ -40,8 +46,7 @@ const projects: Project[] = [
   {
     id: 'regpo',
     title: 'Regpo',
-    description:
-      'Get notified when a university course seat opens up.',
+    description: 'Get notified when a university course seat opens up.',
     tags: ['Rust', 'TypeScript'],
     href: 'https://github.com/sam-ayo/regpo',
     github: 'https://github.com/sam-ayo/regpo',
@@ -49,9 +54,17 @@ const projects: Project[] = [
   {
     id: 'ragask',
     title: 'Ragask',
-    description:
-      'AI copilot for literature reviews using RAG.',
-    tags: ['Python', 'LangChain', 'FastAPI', 'OpenAI', 'Next.js', 'React', 'TypeScript', 'MongoDB'],
+    description: 'AI copilot for literature reviews using RAG.',
+    tags: [
+      'Python',
+      'LangChain',
+      'FastAPI',
+      'OpenAI',
+      'Next.js',
+      'React',
+      'TypeScript',
+      'MongoDB',
+    ],
     href: 'https://app.ragask.com',
     github: 'https://github.com/sam-ayo/ragask',
   },
@@ -101,7 +114,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
 
 export default function Projects() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 mt-8">
       <div className="flex flex-col">
         {projects.map((project, index) => (
           <div key={project.id}>
