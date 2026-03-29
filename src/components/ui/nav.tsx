@@ -152,7 +152,7 @@ const Socials = ({ compact = false }: { compact?: boolean }) => {
 };
 
 const RESUME_URL =
-  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyZ4jrCj9sgy2lpkwhaYoCrmb4K6UGTJidHeqA';
+  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoy4YRCsw0DQiIyFJGuVh12K7fqx5B8js6PnlzA';
 
 const isWritingsActive = (pathname: string) => {
   if (pathname.startsWith('/writings')) return true;
