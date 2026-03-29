@@ -16,25 +16,25 @@ const NavItem = ({
   text: string;
   href?: string;
   isActive?: boolean;
-  onRef?: (el: HTMLAnchorElement | null) => void;
+  onRef?: (el: HTMLElement | null) => void;
   onClick?: (e: React.MouseEvent) => void;
 }) => {
   const isExternal = href?.startsWith('http');
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    onRef?.(linkRef.current);
+    onRef?.(textRef.current);
   }, [onRef]);
 
   return (
     <Link
-      ref={linkRef}
       href={href ? href : `/${text}`}
       {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="relative"
+      className="relative px-3 py-2 -mx-3 -my-2 md:p-0 md:m-0"
       onClick={onClick}
     >
       <p
+        ref={textRef}
         className={`text-sm md:text-base cursor-pointer hover:opacity-75 font-jetbrains-mono ${
           isActive ? 'font-bold' : ''
         }`}
@@ -52,7 +52,7 @@ const NavUnderline = ({
   activeItemRef,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
-  activeItemRef: HTMLAnchorElement | null;
+  activeItemRef: HTMLElement | null;
 }) => {
   const [pos, setPos] = useState<{ left: number; width: number } | null>(null);
 
@@ -182,7 +182,7 @@ const NavMenu = ({
   onTabClick?: (tab: TabName) => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const itemRefs = useRef<Record<string, HTMLElement | null>>({});
   const [, forceUpdate] = useState(0);
 
   const activeItem = items.find((i) => i.isActive);
