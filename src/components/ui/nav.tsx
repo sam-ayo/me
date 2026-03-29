@@ -50,11 +50,9 @@ const NavItem = ({
 const NavUnderline = ({
   containerRef,
   activeItemRef,
-  activeKey,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
   activeItemRef: HTMLAnchorElement | null;
-  activeKey: string;
 }) => {
   const [pos, setPos] = useState<{ left: number; width: number } | null>(null);
 
@@ -67,7 +65,7 @@ const NavUnderline = ({
       width: itemRect.width,
     };
     setPos(newPos);
-  }, [activeItemRef, containerRef, activeKey]);
+  }, [activeItemRef, containerRef]);
 
   useEffect(() => {
     measure();
@@ -221,7 +219,6 @@ const NavMenu = ({
         <NavUnderline
           containerRef={containerRef}
           activeItemRef={activeEl}
-          activeKey={activeKey}
         />
       )}
     </div>
