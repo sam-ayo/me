@@ -152,7 +152,7 @@ const Socials = ({ compact = false }: { compact?: boolean }) => {
 };
 
 const RESUME_URL =
-  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyKuzlxOYSiap4z0oTCPkRyGUmIeZXrlbvLfVY';
+  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoyZ4jrCj9sgy2lpkwhaYoCrmb4K6UGTJidHeqA';
 
 const isWritingsActive = (pathname: string) => {
   if (pathname.startsWith('/writings')) return true;
@@ -216,10 +216,7 @@ const NavMenu = ({
         />
       ))}
       {activeKey && (
-        <NavUnderline
-          containerRef={containerRef}
-          activeItemRef={activeEl}
-        />
+        <NavUnderline containerRef={containerRef} activeItemRef={activeEl} />
       )}
     </div>
   );
