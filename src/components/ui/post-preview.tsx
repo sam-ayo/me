@@ -19,11 +19,11 @@ const usePostViews = () => {
   return views;
 };
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+  const d = new Date(date);
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
 };
 
 const PostPreview = ({
@@ -65,7 +65,7 @@ const PostPreview = ({
                   >
                     <Eye size={12} />
                     <p className="text-sm text-secondary font-jetbrains-mono whitespace-nowrap">
-                      {views.toLocaleString()}
+                      {views.toLocaleString('en-US')}
                     </p>
                   </motion.div>
                 )}

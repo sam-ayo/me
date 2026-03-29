@@ -35,7 +35,7 @@ export const Header = ({ post }: { post: PostContent }) => {
             <span className="mx-2">|</span>
           </span>
 
-          <span>{post.date.toDateString()}</span>
+          <span>{new Date(post.date).toUTCString().slice(0, 16)}</span>
         </span>
         <span className="pr-1.5">
           <Views defaultValue={post.views} postId={post.id} />
@@ -78,7 +78,7 @@ function Views({
     <>
       {views ? (
         <span>
-          {views.toLocaleString()} {views == 1 ? 'view' : 'views'}
+          {views.toLocaleString('en-US')} {views == 1 ? 'view' : 'views'}
         </span>
       ) : null}
     </>
