@@ -4,17 +4,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useMobileTab, TabName } from '@/components/mobile-tab-context';
 
 const NavItem = ({
   text,
   href,
   isActive,
   onRef,
+  onClick,
 }: {
   text: string;
   href?: string;
   isActive?: boolean;
   onRef?: (el: HTMLAnchorElement | null) => void;
+  onClick?: (e: React.MouseEvent) => void;
 }) => {
   const isExternal = href?.startsWith('http');
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -29,6 +32,7 @@ const NavItem = ({
       href={href ? href : `/${text}`}
       {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       className="relative"
+      onClick={onClick}
     >
       <p
         className={`text-sm md:text-base cursor-pointer hover:opacity-75 font-jetbrains-mono ${
@@ -158,6 +162,12 @@ const isWritingsActive = (pathname: string) => {
   return /^\/\d{4}\//.test(pathname);
 };
 
+const TAB_MAP: Record<string, TabName> = {
+  about: 'about',
+  projects: 'projects',
+  writings: 'writings',
+};
+
 type NavItems = {
   text: string;
   href?: string;
@@ -167,9 +177,11 @@ type NavItems = {
 const NavMenu = ({
   items,
   className,
+  onTabClick,
 }: {
   items: NavItems;
   className?: string;
+  onTabClick?: (tab: TabName) => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
@@ -195,6 +207,14 @@ const NavMenu = ({
           onRef={(el) => {
             itemRefs.current[item.text] = el;
           }}
+          onClick={
+            onTabClick && TAB_MAP[item.text]
+              ? (e) => {
+                  e.preventDefault();
+                  onTabClick(TAB_MAP[item.text]);
+                }
+              : undefined
+          }
         />
       ))}
       {activeKey && (
@@ -210,13 +230,25 @@ const NavMenu = ({
 
 const Nav = () => {
   const pathname = usePathname();
+  const { activeTab, setActiveTab, isTabRoute } = useMobileTab();
 
-  const items: NavItems = [
+  // Desktop items use pathname-based active detection
+  const desktopItems: NavItems = [
     { text: 'about', href: '/', isActive: pathname === '/' },
     { text: 'projects', isActive: pathname.startsWith('/projects') },
     { text: 'writings', isActive: isWritingsActive(pathname) },
     { text: 'resume', href: RESUME_URL, isActive: false },
   ];
+
+  // Mobile items use tab context for active state when on a tab route
+  const mobileItems: NavItems = isTabRoute
+    ? [
+        { text: 'about', href: '/', isActive: activeTab === 'about' },
+        { text: 'projects', isActive: activeTab === 'projects' },
+        { text: 'writings', isActive: activeTab === 'writings' },
+        { text: 'resume', href: RESUME_URL, isActive: false },
+      ]
+    : desktopItems;
 
   return (
     <nav className="w-full flex flex-col text-primary border-b">
@@ -230,7 +262,7 @@ const Nav = () => {
 
         {/* Desktop menu */}
         <div className="hidden md:flex gap-8">
-          <NavMenu items={items} className="items-end gap-8" />
+          <NavMenu items={desktopItems} className="items-end gap-8" />
           <Socials />
         </div>
       </div>
@@ -239,8 +271,9 @@ const Nav = () => {
       <div className="md:hidden">
         <div className="py-4 border-t">
           <NavMenu
-            items={items}
+            items={mobileItems}
             className="items-center justify-between w-full"
+            onTabClick={isTabRoute ? setActiveTab : undefined}
           />
         </div>
       </div>
