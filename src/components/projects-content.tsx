@@ -15,11 +15,17 @@ interface Project {
 
 const projects: Project[] = [
   {
-    id: 'rechef',
-    title: 'Rechef',
-    description: 'Extract recipes from URLs, videos, and photos using AI.',
-    tags: ['TypeScript', 'Dart', 'PostgreSQL', 'Flutter'],
-    href: 'https://apps.apple.com/us/app/rechef-recipe-manager/id6758213347',
+    id: 'clonetray',
+    title: 'CloneTray',
+    description:
+      'Clone Git repos from the macOS menu bar, straight into your editor.',
+    tags: ['Swift', 'AppKit', 'macOS', 'Homebrew'],
+    href: releases.clonetray.download,
+    github: 'https://github.com/sam-ayo/clonetray',
+    download: {
+      url: releases.clonetray.download,
+      label: `v${releases.clonetray.version}`,
+    },
   },
   {
     id: 'notable-ai',
@@ -38,25 +44,19 @@ const projects: Project[] = [
     href: 'https://www.notableai.ca',
   },
   {
-    id: 'clonetray',
-    title: 'CloneTray',
-    description:
-      'Clone Git repos from the macOS menu bar, straight into your editor.',
-    tags: ['Swift', 'AppKit', 'macOS', 'Homebrew'],
-    href: releases.clonetray.download,
-    github: 'https://github.com/sam-ayo/clonetray',
-    download: {
-      url: releases.clonetray.download,
-      label: `v${releases.clonetray.version}`,
-    },
-  },
-  {
     id: 'regpo',
     title: 'Regpo',
     description: 'Get notified when a university course seat opens up.',
     tags: ['Rust', 'TypeScript'],
     href: 'https://github.com/sam-ayo/regpo',
     github: 'https://github.com/sam-ayo/regpo',
+  },
+  {
+    id: 'rechef',
+    title: 'Rechef',
+    description: 'Extract recipes from URLs, videos, and photos using AI.',
+    tags: ['TypeScript', 'Dart', 'PostgreSQL', 'Flutter'],
+    href: 'https://apps.apple.com/us/app/rechef-recipe-manager/id6758213347',
   },
   {
     id: 'ragask',
