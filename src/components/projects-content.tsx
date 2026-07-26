@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { Github } from 'lucide-react';
+import { Download, Github } from 'lucide-react';
+import releases from '@/data/releases.json';
 
 interface Project {
   id: string;
@@ -9,6 +10,7 @@ interface Project {
   tags: string[];
   href: string;
   github?: string;
+  download?: { url: string; label: string };
 }
 
 const projects: Project[] = [
@@ -38,10 +40,15 @@ const projects: Project[] = [
   {
     id: 'clonetray',
     title: 'CloneTray',
-    description: 'Clone Git repos from the macOS menu bar.',
-    tags: ['Python', 'Shell', 'macOS', 'Homebrew'],
-    href: 'https://github.com/sam-ayo/clonetray',
+    description:
+      'Clone Git repos from the macOS menu bar, straight into your editor.',
+    tags: ['Swift', 'AppKit', 'macOS', 'Homebrew'],
+    href: releases.clonetray.download,
     github: 'https://github.com/sam-ayo/clonetray',
+    download: {
+      url: releases.clonetray.download,
+      label: `v${releases.clonetray.version}`,
+    },
   },
   {
     id: 'regpo',
@@ -81,19 +88,31 @@ const ProjectPreview = ({ project }: { project: Project }) => {
                 {project.title}
               </p>
             </Link>
-            {project.github && (
-              <Link
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0"
-              >
-                <Github
-                  size={18}
-                  className="text-secondary hover:text-primary"
-                />
-              </Link>
-            )}
+            <div className="flex items-center gap-3 shrink-0">
+              {project.download && (
+                <Link
+                  href={project.download.url}
+                  className="flex items-center gap-1 text-secondary hover:text-primary"
+                >
+                  <Download size={16} />
+                  <span className="font-jetbrains-mono text-[10px]">
+                    {project.download.label}
+                  </span>
+                </Link>
+              )}
+              {project.github && (
+                <Link
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github
+                    size={18}
+                    className="text-secondary hover:text-primary"
+                  />
+                </Link>
+              )}
+            </div>
           </div>
           <p className="text-sm text-secondary">{project.description}</p>
           <div className="flex flex-nowrap gap-1.5 cursor-default overflow-x-auto">
