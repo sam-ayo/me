@@ -154,16 +154,9 @@ const Socials = ({ compact = false }: { compact?: boolean }) => {
 const RESUME_URL =
   'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoy4YRCsw0DQiIyFJGuVh12K7fqx5B8js6PnlzA';
 
-const isWritingsActive = (pathname: string) => {
-  if (pathname.startsWith('/writings')) return true;
-  // Post pages are at /<year>/... (e.g. /2024/some-post)
-  return /^\/\d{4}\//.test(pathname);
-};
-
 const TAB_MAP: Record<string, TabName> = {
   about: 'about',
   projects: 'projects',
-  writings: 'writings',
 };
 
 type NavItems = {
@@ -230,7 +223,6 @@ const Nav = () => {
   const desktopItems: NavItems = [
     { text: 'about', href: '/', isActive: pathname === '/' },
     { text: 'projects', isActive: pathname.startsWith('/projects') },
-    { text: 'writings', isActive: isWritingsActive(pathname) },
     { text: 'resume', href: RESUME_URL, isActive: false },
   ];
 
@@ -239,7 +231,6 @@ const Nav = () => {
     ? [
         { text: 'about', href: '/', isActive: activeTab === 'about' },
         { text: 'projects', isActive: activeTab === 'projects' },
-        { text: 'writings', isActive: activeTab === 'writings' },
         { text: 'resume', href: RESUME_URL, isActive: false },
       ]
     : desktopItems;
