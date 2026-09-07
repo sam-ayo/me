@@ -51,6 +51,13 @@ const projects: Project[] = [
     github: 'https://github.com/sam-ayo/regpo',
   },
   {
+    id: 'bud',
+    title: 'Bud',
+    description: 'Turn free text workout notes into structured exercise logs.',
+    tags: ['TypeScript', 'Dart', 'PostgreSQL', 'Vercel AI SDK', 'Flutter'],
+    href: 'https://bud-landing.vercel.app',
+  },
+  {
     id: 'rechef',
     title: 'Rechef',
     description: 'Extract recipes from URLs, videos, and photos using AI.',
