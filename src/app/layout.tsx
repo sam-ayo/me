@@ -48,8 +48,8 @@ export default function RootLayout({
 
               {/* Desktop: normal page routing */}
               <SwipeNavigator>
-                <div className="hidden md:block mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8 flex-grow overflow-hidden pb-14">
-                  {children}
+                <div className="hidden md:block mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8 flex-grow overflow-hidden pb-14">
+                  <div className="max-w-2xl">{children}</div>
                 </div>
               </SwipeNavigator>
 
@@ -60,8 +60,10 @@ export default function RootLayout({
               />
             </div>
             <div className="fixed bottom-0 left-0 right-0 z-[9999] bg-background">
-              <div className="mx-auto max-w-2xl w-full px-4 sm:px-6 lg:px-8">
-                <Footer className="font-menlo text-secondary py-4" />
+              <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8">
+                <div className="max-w-2xl">
+                  <Footer className="font-menlo text-secondary py-4" />
+                </div>
               </div>
             </div>
           </MobileTabProvider>
