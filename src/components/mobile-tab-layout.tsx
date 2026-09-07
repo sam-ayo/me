@@ -13,7 +13,9 @@ export function MobileTabLayout({
 
   return (
     <div className="md:hidden mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8 flex-grow overflow-hidden pb-14">
-      <div className="max-w-2xl">{isTabRoute ? tabContent : pageContent}</div>
+      <div className="mx-auto max-w-2xl">
+        {isTabRoute ? tabContent : pageContent}
+      </div>
     </div>
   );
 }
