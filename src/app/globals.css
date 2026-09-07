@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +6,7 @@
   @font-face {
     font-family: Proxima Nova;
     font-weight: 400;
-    src: url(/fonts/Menlo/Menlo-Regular.ttf) format("truetype");
+    src: url(/fonts/Menlo/Menlo-Regular.ttf) format('truetype');
   }
 }
 
@@ -79,5 +79,39 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Print rules. The PDF download comes from the resume route, so these rules
+   only keep a browser print of the page readable. */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  /* Paper is white, so print always uses the light palette. */
+  :root,
+  .dark {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --primary: 0 0% 10%;
+    --primary-foreground: 0 0% 15%;
+    --secondary: 0 0% 30%;
+    --badge-background: 0 0% 94%;
+    --border: 0 0% 78%;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  a {
+    text-decoration: none !important;
   }
 }

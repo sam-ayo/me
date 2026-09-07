@@ -128,8 +128,12 @@ const Logo = () => {
 
 const Socials = ({ compact = false }: { compact?: boolean }) => {
   return (
-    <div className={`flex items-center gap-3 ${compact ? '' : 'flex-col'}`}>
-      <p className="text-sm text-gray-500 dark:text-gray-400">follow mee :))</p>
+    <div
+      className={`flex flex-col gap-1 ${compact ? 'items-end' : 'items-center gap-3'}`}
+    >
+      <p className="text-xs whitespace-nowrap text-gray-500 md:text-sm dark:text-gray-400">
+        follow mee :))
+      </p>
       <div className="flex gap-2">
         <SocialIcon
           src="GitHub-In-Darkmode.svg"
@@ -151,12 +155,10 @@ const Socials = ({ compact = false }: { compact?: boolean }) => {
   );
 };
 
-const RESUME_URL =
-  'https://3pqedghyxg.ufs.sh/f/bA3D3iOdGEoy4YRCsw0DQiIyFJGuVh12K7fqx5B8js6PnlzA';
-
 const TAB_MAP: Record<string, TabName> = {
   about: 'about',
   projects: 'projects',
+  resume: 'resume',
 };
 
 type NavItems = {
@@ -223,7 +225,7 @@ const Nav = () => {
   const desktopItems: NavItems = [
     { text: 'about', href: '/', isActive: pathname === '/' },
     { text: 'projects', isActive: pathname.startsWith('/projects') },
-    { text: 'resume', href: RESUME_URL, isActive: false },
+    { text: 'resume', isActive: pathname.startsWith('/resume') },
   ];
 
   // Mobile items use tab context for active state when on a tab route
@@ -231,7 +233,7 @@ const Nav = () => {
     ? [
         { text: 'about', href: '/', isActive: activeTab === 'about' },
         { text: 'projects', isActive: activeTab === 'projects' },
-        { text: 'resume', href: RESUME_URL, isActive: false },
+        { text: 'resume', isActive: activeTab === 'resume' },
       ]
     : desktopItems;
 

@@ -9,24 +9,24 @@ import {
 } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-export type TabName = 'about' | 'projects' | 'writings';
+export type TabName = 'about' | 'projects' | 'resume';
 
 const TAB_PATHS: Record<TabName, string> = {
   about: '/',
   projects: '/projects',
-  writings: '/writings',
+  resume: '/resume',
 };
 
 const PATH_TO_TAB: Record<string, TabName> = {
   '/': 'about',
   '/projects': 'projects',
-  '/writings': 'writings',
+  '/resume': 'resume',
 };
 
 function pathnameToTab(pathname: string): TabName | null {
   if (PATH_TO_TAB[pathname]) return PATH_TO_TAB[pathname];
   if (pathname.startsWith('/projects')) return 'projects';
-  if (pathname.startsWith('/writings')) return 'writings';
+  if (pathname.startsWith('/resume')) return 'resume';
   return null;
 }
 
@@ -81,4 +81,4 @@ export function useMobileTab() {
   return useContext(MobileTabContext);
 }
 
-export const TABS: TabName[] = ['about', 'projects', 'writings'];
+export const TABS: TabName[] = ['about', 'projects', 'resume'];

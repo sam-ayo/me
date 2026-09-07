@@ -8,11 +8,11 @@ const SWIPE_THRESHOLD = 80;
 export function MobileTabContainer({
   aboutContent,
   projectsContent,
-  writingsContent,
+  resumeContent,
 }: {
   aboutContent: React.ReactNode;
   projectsContent: React.ReactNode;
-  writingsContent: React.ReactNode;
+  resumeContent: React.ReactNode;
 }) {
   const { activeTab, setActiveTab } = useMobileTab();
   const touchStartX = useRef(0);
@@ -38,7 +38,7 @@ export function MobileTabContainer({
         window.scrollTo(0, savedY);
       });
     },
-    [activeTab, setActiveTab]
+    [activeTab, setActiveTab],
   );
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -65,10 +65,10 @@ export function MobileTabContainer({
         handleTabChange(TABS[currentIndex - 1]);
       }
     },
-    [activeTab, handleTabChange]
+    [activeTab, handleTabChange],
   );
 
-  const panels = [aboutContent, projectsContent, writingsContent];
+  const panels = [aboutContent, projectsContent, resumeContent];
 
   return (
     <div

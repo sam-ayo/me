@@ -1,17 +1,14 @@
-import { getPostPreview } from '@/app/get-posts';
-import { WritingsList } from '@/components/ui/post-preview';
 import { MobileTabContainer } from './mobile-tab-container';
 import AboutContent from './about-content.mdx';
 import ProjectsList from './projects-content';
+import ResumeContent from './resume-content';
 
-export async function MobileTabContent() {
-  const allPosts = await getPostPreview();
-
+export function MobileTabContent() {
   return (
     <MobileTabContainer
       aboutContent={<AboutContent />}
       projectsContent={<ProjectsList />}
-      writingsContent={<WritingsList allPosts={allPosts} />}
+      resumeContent={<ResumeContent />}
     />
   );
 }

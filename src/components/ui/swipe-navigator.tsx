@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useRef } from 'react';
 
-const PAGES = ['/', '/projects', '/writings'];
+const PAGES = ['/', '/projects', '/resume'];
 const SWIPE_THRESHOLD = 80;
 
 export function SwipeNavigator({ children }: { children: React.ReactNode }) {
@@ -15,7 +15,7 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
   const getCurrentPageIndex = useCallback(() => {
     if (pathname === '/') return 0;
     const index = PAGES.findIndex(
-      (page) => page !== '/' && pathname.startsWith(page)
+      (page) => page !== '/' && pathname.startsWith(page),
     );
     return index === -1 ? -1 : index;
   }, [pathname]);
@@ -45,7 +45,7 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
         router.push(PAGES[currentIndex - 1]);
       }
     },
-    [getCurrentPageIndex, router]
+    [getCurrentPageIndex, router],
   );
 
   return (
