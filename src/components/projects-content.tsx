@@ -20,7 +20,7 @@ const projects: Project[] = [
     description:
       'Clone Git repos from the macOS menu bar, straight into your editor.',
     tags: ['Swift', 'AppKit', 'macOS', 'Homebrew'],
-    href: releases.clonetray.download,
+    href: 'https://github.com/sam-ayo/clonetray',
     github: 'https://github.com/sam-ayo/clonetray',
     download: {
       url: releases.clonetray.download,
@@ -28,10 +28,9 @@ const projects: Project[] = [
     },
   },
   {
-    id: 'notable-ai',
-    title: 'Notable AI',
-    description:
-      'AI meeting assistant with recording, transcription, and chat.',
+    id: 'notable',
+    title: 'Notable',
+    description: 'Recording tool with transcription and chat.',
     tags: [
       'TypeScript',
       'Dart',
@@ -79,7 +78,7 @@ const projects: Project[] = [
 
 const ProjectPreview = ({ project }: { project: Project }) => {
   return (
-    <div className="group hover:bg-accent/10">
+    <div className="group rounded-lg ring-1 ring-transparent transition-colors hover:bg-accent/10 hover:ring-border">
       <div className="px-2 py-3">
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between items-start gap-4">
@@ -92,6 +91,8 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               {project.download && (
                 <Link
                   href={project.download.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-1 text-secondary hover:text-primary"
                 >
                   <Download size={16} />
@@ -115,7 +116,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
             </div>
           </div>
           <p className="text-sm text-secondary">{project.description}</p>
-          <div className="flex flex-nowrap gap-1.5 cursor-default overflow-x-auto">
+          <div className="flex flex-wrap gap-1.5 cursor-default">
             {project.tags.map((tag, index) => (
               <Badge
                 className="font-jetbrains-mono whitespace-nowrap text-[10px] px-1.5 py-0"
@@ -139,11 +140,11 @@ export default function ProjectsList() {
           <div key={project.id}>
             <ProjectPreview project={project} />
             {index < projects.length - 1 && (
-              <div className="border-b transition-all group-hover:border-transparent" />
+              <div className="mx-2 border-b" />
             )}
           </div>
         ))}
-        <div className="border-b transition-all" />
+        <div className="mx-2 border-b" />
       </div>
     </div>
   );
