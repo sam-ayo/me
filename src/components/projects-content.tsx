@@ -2,6 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Download, Github } from 'lucide-react';
 import releases from '@/data/releases.json';
+import { MacDownloadLink } from '@/components/mac-download-link';
+import { getColimaGuiRelease } from '@/lib/colima-gui-release';
 
 interface Project {
   id: string;
@@ -10,10 +12,24 @@ interface Project {
   tags: string[];
   href: string;
   github?: string;
-  download?: { url: string; label: string };
+  // `detectMacArch` picks the Apple silicon or Intel installer on click.
+  download?: { url: string; label: string; detectMacArch?: boolean };
 }
 
 const projects: Project[] = [
+  {
+    id: 'colima-gui',
+    title: 'Colima GUI',
+    description:
+      'Manage Colima and your Docker containers from a native macOS app.',
+    tags: ['Rust', 'GPUI', 'Docker', 'macOS'],
+    href: 'https://github.com/sam-ayo/colima-gui-releases/releases/latest',
+    download: {
+      url: '/download/colima-gui',
+      label: 'macOS',
+      detectMacArch: true,
+    },
+  },
   {
     id: 'clonetray',
     title: 'CloneTray',
@@ -95,7 +111,18 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               </p>
             </Link>
             <div className="flex items-center gap-3 shrink-0">
-              {project.download && (
+              {project.download?.detectMacArch && (
+                <MacDownloadLink
+                  href={project.download.url}
+                  className="flex items-center gap-1 text-secondary hover:text-primary"
+                >
+                  <Download size={16} />
+                  <span className="font-jetbrains-mono text-[10px]">
+                    {project.download.label}
+                  </span>
+                </MacDownloadLink>
+              )}
+              {project.download && !project.download.detectMacArch && (
                 <Link
                   href={project.download.url}
                   target="_blank"
@@ -139,14 +166,24 @@ const ProjectPreview = ({ project }: { project: Project }) => {
   );
 };
 
-export default function ProjectsList() {
+export default async function ProjectsList() {
+  const colimaGui = await getColimaGuiRelease();
+  const list = projects.map((project) =>
+    project.id === 'colima-gui' && project.download && colimaGui
+      ? {
+          ...project,
+          download: { ...project.download, label: `v${colimaGui.version}` },
+        }
+      : project,
+  );
+
   return (
     <div className="flex flex-col gap-4 mt-8">
       <div className="flex flex-col">
-        {projects.map((project, index) => (
+        {list.map((project, index) => (
           <div key={project.id}>
             <ProjectPreview project={project} />
-            {index < projects.length - 1 && (
+            {index < list.length - 1 && (
               <div className="mx-2 border-b" />
             )}
           </div>
