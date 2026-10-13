@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Download, Github } from 'lucide-react';
 import releases from '@/data/releases.json';
@@ -14,9 +15,33 @@ interface Project {
   github?: string;
   // `detectMacArch` picks the Apple silicon or Intel installer on click.
   download?: { url: string; label: string; detectMacArch?: boolean };
+  screenshots?: { src: string; alt: string }[];
 }
 
 const projects: Project[] = [
+  {
+    id: 'mail',
+    title: 'Mail',
+    description:
+      'A keyboard-first email client with one inbox for all your accounts.',
+    tags: ['TypeScript', 'React Router', 'PostgreSQL', 'Tailwind CSS'],
+    href: 'https://mail.samayo.me',
+    github: 'https://github.com/sam-ayo/mail',
+    screenshots: [
+      {
+        src: '/projects/mail/inbox.jpg',
+        alt: 'The unified inbox with an open conversation',
+      },
+      {
+        src: '/projects/mail/palette.jpg',
+        alt: 'The command palette',
+      },
+      {
+        src: '/projects/mail/light.jpg',
+        alt: 'The inbox in the light theme',
+      },
+    ],
+  },
   {
     id: 'colima-gui',
     title: 'Colima GUI',
@@ -160,6 +185,28 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               </Badge>
             ))}
           </div>
+          {project.screenshots && (
+            <div className="grid grid-cols-3 gap-2 mt-1.5">
+              {project.screenshots.map((shot) => (
+                <Link
+                  key={shot.src}
+                  href={shot.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="overflow-hidden rounded-md border"
+                >
+                  <Image
+                    src={shot.src}
+                    alt={shot.alt}
+                    width={1600}
+                    height={884}
+                    sizes="(min-width: 768px) 224px, 33vw"
+                    className="w-full h-auto transition-transform hover:scale-[1.02]"
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
