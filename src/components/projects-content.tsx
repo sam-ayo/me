@@ -1,10 +1,12 @@
 import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Download, Github } from 'lucide-react';
 import releases from '@/data/releases.json';
 import { MacDownloadLink } from '@/components/mac-download-link';
 import { getColimaGuiRelease } from '@/lib/colima-gui-release';
+import ScreenshotGallery, {
+  type Screenshot,
+} from '@/components/screenshot-gallery';
 
 interface Project {
   id: string;
@@ -15,7 +17,7 @@ interface Project {
   github?: string;
   // `detectMacArch` picks the Apple silicon or Intel installer on click.
   download?: { url: string; label: string; detectMacArch?: boolean };
-  screenshots?: { src: string; alt: string }[];
+  screenshots?: Screenshot[];
 }
 
 const projects: Project[] = [
@@ -186,26 +188,10 @@ const ProjectPreview = ({ project }: { project: Project }) => {
             ))}
           </div>
           {project.screenshots && (
-            <div className="grid grid-cols-3 gap-2 mt-1.5">
-              {project.screenshots.map((shot) => (
-                <Link
-                  key={shot.src}
-                  href={shot.src}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="overflow-hidden rounded-md border"
-                >
-                  <Image
-                    src={shot.src}
-                    alt={shot.alt}
-                    width={1600}
-                    height={884}
-                    sizes="(min-width: 768px) 224px, 33vw"
-                    className="w-full h-auto transition-transform hover:scale-[1.02]"
-                  />
-                </Link>
-              ))}
-            </div>
+            <ScreenshotGallery
+              title={project.title}
+              screenshots={project.screenshots}
+            />
           )}
         </div>
       </div>
