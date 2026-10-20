@@ -142,7 +142,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               href={project.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xl font-semibold after:absolute after:inset-0 after:rounded-lg"
+              className="text-lg font-semibold after:absolute after:inset-0 after:rounded-lg"
             >
               {project.title}
             </Link>
@@ -184,7 +184,7 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               )}
             </div>
           </div>
-          <p className="text-lg/[1.75rem] text-secondary">{project.description}</p>
+          <p className="text-base/7 text-secondary">{project.description}</p>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, index) => (
               <Badge

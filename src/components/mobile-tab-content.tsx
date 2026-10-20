@@ -6,7 +6,7 @@ import ResumeContent from './resume-content';
 // The about tab reads as body text, so its paragraphs are larger than the
 // paragraphs of a blog post.
 export const AboutParagraph = (props: React.ComponentProps<'p'>) => (
-  <p className="my-10 text-lg/[1.75rem]" {...props} />
+  <p className="my-10 text-base/7" {...props} />
 );
 
 export function MobileTabContent() {
