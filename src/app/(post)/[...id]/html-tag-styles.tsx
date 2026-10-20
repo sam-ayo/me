@@ -63,7 +63,7 @@ const tags: Components = {
     return (
       <a
         href={href}
-        className="underline decoration-gray-400 dark:decoration-gray-500 underline-offset-2 decoration-1 hover:decoration-2 hover:decoration-gray-800 dark:hover:decoration-gray-200 transition-all"
+        className="underline decoration-accent/50 underline-offset-2 decoration-1 hover:decoration-2 hover:decoration-accent transition-[text-decoration-color]"
         {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         {...props}
       >
@@ -75,6 +75,7 @@ const tags: Components = {
     return (
       <code
         className={`
+        font-plex-mono
         [p_&]:text-sm
         [p_&]:px-1
         [p_&]:py-0.5

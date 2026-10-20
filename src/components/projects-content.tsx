@@ -99,25 +99,34 @@ const projects: Project[] = [
   },
 ];
 
+// The padding and negative margin give each icon a bigger touch area with no
+// change to the layout. `relative` lifts the icon above the row link.
+const iconLinkClass =
+  'relative -m-1.5 flex items-center gap-1 p-1.5 text-secondary transition-[color,transform] duration-150 ease-out hover:text-primary active:scale-[0.97]';
+
 const ProjectPreview = ({ project }: { project: Project }) => {
   return (
-    <div className="group rounded-lg ring-1 ring-transparent transition-colors hover:bg-accent/10 hover:ring-border">
+    <div className="group relative rounded-lg transition-[background-color,transform] duration-150 ease-out hover:bg-badge-background/70 active:scale-[0.99]">
       <div className="px-2 py-3">
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between items-start gap-4">
-            <Link href={project.href} target="_blank" rel="noopener noreferrer">
-              <p className="font-semibold group-hover:underline cursor-pointer">
-                {project.title}
-              </p>
+            {/* The link covers the whole row, so a tap anywhere opens it. */}
+            <Link
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xl font-semibold after:absolute after:inset-0 after:rounded-lg"
+            >
+              {project.title}
             </Link>
             <div className="flex items-center gap-3 shrink-0">
               {project.download?.detectMacArch && (
                 <MacDownloadLink
                   href={project.download.url}
-                  className="flex items-center gap-1 text-secondary hover:text-primary"
+                  className={iconLinkClass}
                 >
                   <Download size={16} />
-                  <span className="font-jetbrains-mono text-[10px]">
+                  <span className="font-plex-mono text-[10px]">
                     {project.download.label}
                   </span>
                 </MacDownloadLink>
@@ -127,10 +136,10 @@ const ProjectPreview = ({ project }: { project: Project }) => {
                   href={project.download.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-secondary hover:text-primary"
+                  className={iconLinkClass}
                 >
                   <Download size={16} />
-                  <span className="font-jetbrains-mono text-[10px]">
+                  <span className="font-plex-mono text-[10px]">
                     {project.download.label}
                   </span>
                 </Link>
@@ -140,20 +149,19 @@ const ProjectPreview = ({ project }: { project: Project }) => {
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${project.title} on GitHub`}
+                  className={iconLinkClass}
                 >
-                  <Github
-                    size={18}
-                    className="text-secondary hover:text-primary"
-                  />
+                  <Github size={18} />
                 </Link>
               )}
             </div>
           </div>
-          <p className="text-sm text-secondary">{project.description}</p>
-          <div className="flex flex-wrap gap-1.5 cursor-default">
+          <p className="text-lg/[1.75rem] text-secondary">{project.description}</p>
+          <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag, index) => (
               <Badge
-                className="font-jetbrains-mono whitespace-nowrap text-[10px] px-1.5 py-0"
+                className="font-plex-mono whitespace-nowrap text-[10px] px-1.5 py-0"
                 key={index}
               >
                 {tag}
@@ -179,16 +187,10 @@ export default async function ProjectsList() {
 
   return (
     <div className="flex flex-col gap-4 mt-8">
-      <div className="flex flex-col">
-        {list.map((project, index) => (
-          <div key={project.id}>
-            <ProjectPreview project={project} />
-            {index < list.length - 1 && (
-              <div className="mx-2 border-b" />
-            )}
-          </div>
+      <div className="enter-stagger flex flex-col gap-1">
+        {list.map((project) => (
+          <ProjectPreview key={project.id} project={project} />
         ))}
-        <div className="mx-2 border-b" />
       </div>
     </div>
   );

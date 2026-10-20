@@ -49,7 +49,7 @@ const PostPreview = ({
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-1">
               <Calendar size={10} className="text-secondary" />
-              <p className="text-xs text-secondary font-jetbrains-mono">
+              <p className="text-xs text-secondary font-plex-mono">
                 {formatDate(date)}
               </p>
             </div>
@@ -61,10 +61,10 @@ const PostPreview = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.7 }}
+                    transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
                   >
                     <Eye size={12} />
-                    <p className="text-sm text-secondary font-jetbrains-mono whitespace-nowrap">
+                    <p className="text-sm text-secondary font-plex-mono whitespace-nowrap">
                       {views.toLocaleString('en-US')}
                     </p>
                   </motion.div>
@@ -77,7 +77,7 @@ const PostPreview = ({
           {tags.map((tag, index) => {
             return (
               <Badge
-                className="font-jetbrains-mono whitespace-nowrap"
+                className="font-plex-mono whitespace-nowrap"
                 key={index}
               >
                 {tag}
@@ -117,20 +117,21 @@ const YearPreviews = ({
 
   return (
     <div className="mt-8 flex flex-col gap-4">
-      <div
-        className="text-lg text-secondary font-jetbrains-mono cursor-pointer hover:opacity-80"
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        className="-my-1 flex w-fit items-center gap-2 py-1 text-lg text-secondary font-plex-mono transition-[opacity,transform] duration-150 ease-out hover:opacity-80 active:scale-[0.97]"
         onClick={handleToggle}
       >
-        <div className="flex items-center gap-2">
-          {yearPreviews.year}
-          <motion.div
-            animate={{ rotate: isOpen ? 0 : -90 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ChevronDown size={16} />
-          </motion.div>
-        </div>
-      </div>
+        {yearPreviews.year}
+        <motion.div
+          initial={false}
+          animate={{ rotate: isOpen ? 0 : -90 }}
+          transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <ChevronDown size={16} />
+        </motion.div>
+      </button>
       {yearPreviews.posts.length === 0 && (
         <motion.div
           initial={{ height: 0, opacity: 0 }}
@@ -152,22 +153,22 @@ const YearPreviews = ({
           transition={
             isOpen
               ? {
-                  height: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+                  height: { duration: 0.3, ease: [0.23, 1, 0.32, 1] },
                   opacity: { duration: 0.2, delay: 0.05 },
                 }
               : {
-                  height: { duration: 0.25, ease: [0.4, 0, 0.2, 1] },
+                  height: { duration: 0.2, ease: [0.23, 1, 0.32, 1] },
                   opacity: { duration: 0.15 },
                 }
           }
           style={{ overflow: 'hidden' }}
         >
           <div className="flex flex-col">
-            <div className="border-b transition-all" />
+            <div className="border-b" />
             {yearPreviews.posts.map(
               ({ id, title, tags, date }, index) => {
                 return (
-                  <div key={index} className="group hover:bg-accent/10">
+                  <div key={index} className="group transition-colors hover:bg-badge-background/70">
                     <div className="px-2 py-3">
                       <PostPreview
                         id={id}
@@ -178,13 +179,13 @@ const YearPreviews = ({
                       />
                     </div>
                     {index < yearPreviews.posts.length - 1 && (
-                      <div className="border-b transition-all group-hover:border-transparent" />
+                      <div className="border-b transition-colors group-hover:border-transparent" />
                     )}
                   </div>
                 );
               },
             )}
-            <div className="border-b transition-all" />
+            <div className="border-b" />
           </div>
         </motion.div>
       )}

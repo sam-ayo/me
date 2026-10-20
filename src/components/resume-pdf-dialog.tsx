@@ -24,9 +24,7 @@ const PAGE_WIDTH = 816;
  *
  * A closed dialog normally has no box. This one keeps a hidden box at the size
  * of the open modal, so the frame loads and paints the PDF before the reader
- * asks for it and the open shows the finished page with no flash. A copy of the
- * resume that the layout hides with `display: none` measures zero, so only the
- * visible copy mounts a frame.
+ * asks for it and the open shows the finished page with no flash.
  */
 export default function ResumePdfDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -89,10 +87,10 @@ export default function ResumePdfDialog() {
         type="button"
         onClick={open}
         title="Preview resume as PDF"
-        className="flex items-center gap-1 shrink-0 text-secondary hover:text-primary print:hidden"
+        className="-m-1.5 flex items-center gap-1 shrink-0 p-1.5 text-secondary transition-[color,transform] duration-150 ease-out active:scale-[0.97] hover:text-primary print:hidden"
       >
         <FileText size={16} />
-        <span className="font-jetbrains-mono text-[10px]">pdf</span>
+        <span className="font-plex-mono text-[10px]">pdf</span>
       </button>
 
       <dialog
@@ -108,28 +106,29 @@ export default function ResumePdfDialog() {
            The closed state overrides the `display: none` that a closed dialog
            gets by default. It pins the dialog to the same fixed box that the
            modal state uses, so the body measures its final size, and hides it
-           with `visibility` so the frame still loads. */
-        className="m-0 flex flex-col w-screen h-[100dvh] max-w-none max-h-none p-0 overflow-hidden border-0 bg-background text-primary backdrop:bg-black/60 sm:m-auto sm:w-[min(92vw,56rem)] sm:h-[min(88vh,56rem)] sm:rounded-lg sm:border [&:not([open])]:invisible [&:not([open])]:fixed [&:not([open])]:inset-0"
+           with `visibility` so the frame still loads.
+           `pdf-dialog` in globals.css fades the modal in. */
+        className="pdf-dialog m-0 flex flex-col w-screen h-[100dvh] max-w-none max-h-none p-0 overflow-hidden border-0 bg-background text-primary backdrop:bg-black/60 sm:m-auto sm:w-[min(92vw,56rem)] sm:h-[min(88vh,56rem)] sm:rounded-lg sm:border [&:not([open])]:invisible [&:not([open])]:fixed [&:not([open])]:inset-0"
       >
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
-          <p className="font-jetbrains-mono text-xs text-secondary truncate">
+          <p className="font-plex-mono text-xs text-secondary truncate">
             {pdfFileName}
           </p>
           <div className="flex items-center gap-4 shrink-0">
             <a
               href={PDF_URL}
               download={pdfFileName}
-              className="flex items-center gap-1 text-secondary hover:text-primary"
+              className="-m-1.5 flex items-center gap-1 p-1.5 text-secondary transition-[color,transform] duration-150 ease-out active:scale-[0.97] hover:text-primary"
             >
               <Download size={16} />
-              <span className="font-jetbrains-mono text-[10px]">download</span>
+              <span className="font-plex-mono text-[10px]">download</span>
             </a>
             <button
               type="button"
               onClick={close}
               title="Close preview"
               aria-label="Close preview"
-              className="text-secondary hover:text-primary"
+              className="-m-2 p-2 text-secondary transition-[color,transform] duration-150 ease-out active:scale-[0.97] hover:text-primary"
             >
               <X size={16} />
             </button>
@@ -160,7 +159,7 @@ export default function ResumePdfDialog() {
           href={PDF_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="border-t px-4 py-3 font-jetbrains-mono text-[10px] text-secondary hover:text-primary sm:hidden"
+          className="border-t px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] font-plex-mono text-[10px] text-secondary transition-colors hover:text-primary sm:hidden"
         >
           open the full PDF in a new tab ↗
         </a>

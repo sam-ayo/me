@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export type TabName = 'about' | 'projects' | 'resume';
 
@@ -43,10 +43,15 @@ const MobileTabContext = createContext<MobileTabContextValue>({
 });
 
 export function MobileTabProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTabState] = useState<TabName>('about');
-  const [isTabRoute, setIsTabRoute] = useState(true);
   const pathname = usePathname();
-  const router = useRouter();
+  // The first render reads the route, so a page that is not a tab does not
+  // flash the tab content before an effect corrects it.
+  const [activeTab, setActiveTabState] = useState<TabName>(
+    () => pathnameToTab(pathname) ?? 'about',
+  );
+  const [isTabRoute, setIsTabRoute] = useState(
+    () => pathnameToTab(pathname) !== null,
+  );
 
   useEffect(() => {
     const tab = pathnameToTab(pathname);
@@ -63,11 +68,14 @@ export function MobileTabProvider({ children }: { children: React.ReactNode }) {
       setActiveTabState(tab);
       setIsTabRoute(true);
       const path = TAB_PATHS[tab];
-      if (pathname !== path) {
-        router.push(path);
+      /* All the tabs are already on the page, so a tab switch only changes the
+         URL. Next.js syncs `usePathname` with `pushState` and restores the
+         entry on back and forward, with no server request. */
+      if (window.location.pathname !== path) {
+        window.history.pushState(null, '', path);
       }
     },
-    [pathname, router],
+    [],
   );
 
   return (

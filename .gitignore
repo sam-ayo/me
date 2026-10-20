@@ -40,3 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .content-collections
+
+# OpenNext and Wrangler
+.open-next
+.wrangler
+.dev.vars*
