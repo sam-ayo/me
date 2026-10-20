@@ -4,6 +4,9 @@ import { Download, Github } from 'lucide-react';
 import releases from '@/data/releases.json';
 import { MacDownloadLink } from '@/components/mac-download-link';
 import { getColimaGuiRelease } from '@/lib/colima-gui-release';
+import ScreenshotGallery, {
+  type Screenshot,
+} from '@/components/screenshot-gallery';
 
 interface Project {
   id: string;
@@ -14,9 +17,33 @@ interface Project {
   github?: string;
   // `detectMacArch` picks the Apple silicon or Intel installer on click.
   download?: { url: string; label: string; detectMacArch?: boolean };
+  screenshots?: Screenshot[];
 }
 
 const projects: Project[] = [
+  {
+    id: 'mail',
+    title: 'Mail',
+    description:
+      'A keyboard-first email client with one inbox for all your accounts.',
+    tags: ['TypeScript', 'React Router', 'PostgreSQL', 'Tailwind CSS'],
+    href: 'https://mail.samayo.me',
+    github: 'https://github.com/sam-ayo/mail',
+    screenshots: [
+      {
+        src: '/projects/mail/inbox.jpg',
+        alt: 'The unified inbox with an open conversation',
+      },
+      {
+        src: '/projects/mail/palette.jpg',
+        alt: 'The command palette',
+      },
+      {
+        src: '/projects/mail/light.jpg',
+        alt: 'The inbox in the light theme',
+      },
+    ],
+  },
   {
     id: 'colima-gui',
     title: 'Colima GUI',
@@ -168,6 +195,12 @@ const ProjectPreview = ({ project }: { project: Project }) => {
               </Badge>
             ))}
           </div>
+          {project.screenshots && (
+            <ScreenshotGallery
+              title={project.title}
+              screenshots={project.screenshots}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -64,8 +64,8 @@ export const contacts: Contact[] = [
   },
   {
     label: 'email',
-    href: 'mailto:samuelayomideadeoye@gmail.com',
-    print: 'samuelayomideadeoye@gmail.com',
+    href: 'mailto:mail@samayo.me',
+    print: 'mail@samayo.me',
   },
 ];
 
