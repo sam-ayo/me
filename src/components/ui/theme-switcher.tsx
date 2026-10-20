@@ -19,7 +19,9 @@ const syncThemeColor = () => {
 };
 
 const ThemeSwitcher = ({ className }: { className?: string }) => {
-  const { theme, setTheme } = useTheme();
+  // `resolvedTheme` is the mode on the screen. It is "light" or "dark", also
+  // when the reader follows the system setting.
+  const { resolvedTheme, systemTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // The server does not know the stored mode, so the name shows after mount.
@@ -27,10 +29,11 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (mounted) syncThemeColor();
-  }, [mounted, theme]);
+  }, [mounted, resolvedTheme]);
 
   // Before mount, the first render must match the server HTML.
-  const current: Theme = mounted && isTheme(theme) ? theme : 'light';
+  const current: Theme =
+    mounted && isTheme(resolvedTheme) ? resolvedTheme : 'light';
   const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
 
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,7 +42,8 @@ const ThemeSwitcher = ({ className }: { className?: string }) => {
       // next-themes sets the attribute in an effect, after the View
       // Transition takes its snapshot. The attribute is set here first.
       root.dataset.theme = next;
-      setTheme(next);
+      // A change back to the system mode follows the system setting again.
+      setTheme(next === systemTheme ? 'system' : next);
     };
 
     if (!document.startViewTransition) {

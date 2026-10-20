@@ -11,13 +11,13 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       {/* The old "palette" key held names of removed palettes. A new key
-          sends returning readers to light mode. */}
+          sends returning readers to the system mode. */}
       <ThemeProvider
         attribute="data-theme"
         themes={[...THEMES]}
-        defaultTheme="light"
+        defaultTheme="system"
         storageKey="color-mode"
-        enableSystem={false}
+        enableSystem
         disableTransitionOnChange
       >
         {/* Keeps fades but drops movement for readers who ask for less motion. */}
