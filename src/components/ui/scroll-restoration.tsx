@@ -38,11 +38,19 @@ export function ScrollRestoration() {
       saveScrollPosition(prevPathname.current);
     };
 
+    // A swipe between the mobile tabs changes the route with no click.
     document.addEventListener('click', handleBeforeNav, { capture: true });
+    document.addEventListener('touchstart', handleBeforeNav, {
+      capture: true,
+      passive: true,
+    });
     window.addEventListener('beforeunload', handleBeforeNav);
 
     return () => {
       document.removeEventListener('click', handleBeforeNav, { capture: true });
+      document.removeEventListener('touchstart', handleBeforeNav, {
+        capture: true,
+      });
       window.removeEventListener('beforeunload', handleBeforeNav);
     };
   }, []);

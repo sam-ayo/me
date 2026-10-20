@@ -1,7 +1,11 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: ["selector", '[data-theme="dark"]'],
+  // Touch screens fire hover on tap, so hover styles apply to a mouse only.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,8 +14,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        "jetbrains-mono": ["JetBrains Mono", "serif"],
-        menlo: ["Menlo", "sans-serif"],
+        "plex-mono": ["var(--font-plex-mono)", "monospace"],
+        menlo: ["Menlo", "monospace"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -55,6 +59,11 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+      },
+      transitionTimingFunction: {
+        out: "cubic-bezier(0.23, 1, 0.32, 1)",
+        "in-out": "cubic-bezier(0.77, 0, 0.175, 1)",
+        drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
       },
       borderRadius: {
         lg: "var(--radius)",

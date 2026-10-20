@@ -25,7 +25,7 @@ export default async function Page({
   }
 
   return (
-    <div className="text-sm font-menlo prose prose-neutral dark:prose-invert">
+    <div className="text-sm font-menlo leading-loose prose prose-neutral dark:prose-invert prose-p:leading-loose prose-li:leading-loose">
       <Header post={post as PostContent} />
       <Markdown
         remarkPlugins={[remarkGfm]}

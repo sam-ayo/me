@@ -18,8 +18,8 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <section className="flex flex-col gap-3">
-    <h2 className="font-jetbrains-mono text-xs uppercase tracking-widest text-secondary">
+  <section className="flex flex-col gap-6">
+    <h2 className="font-plex-mono text-xs uppercase tracking-widest text-secondary">
       {title}
     </h2>
     {children}
@@ -38,7 +38,7 @@ const EntryHeader = ({
   href?: string;
 }) => (
   <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-    <p className="font-semibold">
+    <p className="text-lg font-semibold print:text-base">
       {href ? (
         <Link
           href={href}
@@ -55,16 +55,16 @@ const EntryHeader = ({
         <span className="font-normal text-secondary"> · {subheading}</span>
       )}
     </p>
-    <p className="font-jetbrains-mono text-[10px] text-secondary shrink-0">
+    <p className="font-plex-mono text-xs text-secondary shrink-0">
       {meta}
     </p>
   </div>
 );
 
 const Points = ({ points }: { points: string[] }) => (
-  <ul className="flex flex-col gap-1.5">
+  <ul className="flex flex-col gap-3">
     {points.map((point) => (
-      <li key={point} className="flex gap-2 text-sm text-secondary">
+      <li key={point} className="flex gap-3 text-base/7 text-secondary print:text-sm">
         <span aria-hidden="true">–</span>
         <span>{point}</span>
       </li>
@@ -76,9 +76,9 @@ export default function ResumeContent() {
   return (
     <div
       data-resume-root
-      className="flex flex-col gap-8 mt-8 print:gap-6 print:mt-0"
+      className="enter-stagger flex flex-col gap-16 mt-8 print:gap-6 print:mt-0"
     >
-      <header className="flex flex-col gap-3">
+      <header className="flex flex-col gap-6">
         <h1 className="hidden print:block text-xl font-semibold">{name}</h1>
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <div className="flex flex-wrap gap-x-3 gap-y-1">
@@ -90,7 +90,7 @@ export default function ResumeContent() {
                   href={contact.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-jetbrains-mono text-xs text-secondary hover:text-primary hover:underline"
+                  className="font-plex-mono text-xs text-secondary hover:text-primary hover:underline"
                 >
                   <span className="print:hidden">{contact.label}</span>
                   <span className="hidden print:inline">{contact.print}</span>
@@ -99,15 +99,14 @@ export default function ResumeContent() {
           </div>
           <ResumePdfDialog />
         </div>
-        <p className="text-sm text-secondary">{summary}</p>
+        <p className="text-base/7 text-secondary print:text-sm">{summary}</p>
       </header>
 
       <Section title="Experience">
-        <div className="flex flex-col">
-          <div className="mx-2 border-b" />
-          {experience.map((role, index) => (
+        <div className="flex flex-col gap-12 print:gap-4">
+          {experience.map((role) => (
             <div key={`${role.company}-${role.dates}`}>
-              <div className="flex flex-col gap-1.5 px-2 py-3 print:break-inside-avoid">
+              <div className="flex flex-col gap-3 print:break-inside-avoid">
                 <EntryHeader
                   heading={role.title}
                   subheading={role.company}
@@ -115,21 +114,16 @@ export default function ResumeContent() {
                 />
                 <Points points={role.points} />
               </div>
-              {index < experience.length - 1 && (
-                <div className="mx-2 border-b" />
-              )}
             </div>
           ))}
-          <div className="mx-2 border-b" />
         </div>
       </Section>
 
       <Section title="Projects">
-        <div className="flex flex-col">
-          <div className="mx-2 border-b" />
-          {projects.map((project, index) => (
+        <div className="flex flex-col gap-12 print:gap-4">
+          {projects.map((project) => (
             <div key={project.title}>
-              <div className="flex flex-col gap-1.5 px-2 py-3 print:break-inside-avoid">
+              <div className="flex flex-col gap-3 print:break-inside-avoid">
                 <EntryHeader
                   heading={project.title}
                   meta={project.date}
@@ -140,35 +134,33 @@ export default function ResumeContent() {
                   {project.stack.map((tag) => (
                     <Badge
                       key={tag}
-                      className="font-jetbrains-mono whitespace-nowrap text-[10px] px-1.5 py-0"
+                      className="font-plex-mono whitespace-nowrap text-[10px] px-1.5 py-0"
                     >
                       {tag}
                     </Badge>
                   ))}
                 </div>
               </div>
-              {index < projects.length - 1 && <div className="mx-2 border-b" />}
             </div>
           ))}
-          <div className="mx-2 border-b" />
         </div>
       </Section>
 
       <Section title="Skills">
-        <div className="flex flex-col gap-2.5 px-2">
+        <div className="flex flex-col gap-4">
           {skills.map((group) => (
             <div
               key={group.label}
               className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-3"
             >
-              <p className="font-jetbrains-mono text-[10px] uppercase tracking-wide text-secondary sm:w-24 sm:shrink-0">
+              <p className="font-plex-mono text-[10px] uppercase tracking-wide text-secondary sm:w-24 sm:shrink-0">
                 {group.label}
               </p>
               <div className="flex flex-wrap gap-1.5 cursor-default">
                 {group.items.map((item) => (
                   <Badge
                     key={item}
-                    className="font-jetbrains-mono whitespace-nowrap text-[10px] px-1.5 py-0"
+                    className="font-plex-mono whitespace-nowrap text-[10px] px-1.5 py-0"
                   >
                     {item}
                   </Badge>
@@ -180,17 +172,15 @@ export default function ResumeContent() {
       </Section>
 
       <Section title="Education">
-        <div className="flex flex-col">
-          <div className="mx-2 border-b" />
-          <div className="flex flex-col gap-1.5 px-2 py-3 print:break-inside-avoid">
+        <div className="flex flex-col gap-12 print:gap-4">
+          <div className="flex flex-col gap-3 print:break-inside-avoid">
             <EntryHeader heading={education.school} meta={education.dates} />
-            <p className="text-sm text-secondary">{education.degree}</p>
-            <p className="font-jetbrains-mono text-[10px] text-secondary">
+            <p className="text-base/7 text-secondary print:text-sm">{education.degree}</p>
+            <p className="font-plex-mono text-[10px] text-secondary">
               {education.location}
             </p>
             <Points points={education.notes} />
           </div>
-          <div className="mx-2 border-b" />
         </div>
       </Section>
     </div>

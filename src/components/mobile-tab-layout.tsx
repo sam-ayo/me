@@ -12,9 +12,15 @@ export function MobileTabLayout({
   const { isTabRoute } = useMobileTab();
 
   return (
-    <div className="md:hidden mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8 flex-grow overflow-hidden pb-14">
-      <div className="mx-auto max-w-2xl">
-        {isTabRoute ? tabContent : pageContent}
+    <div className="page-column flex-grow overflow-hidden pb-14">
+      {/* The tabs use 20px text and fill the column. Posts use smaller text,
+          so a narrower measure keeps their lines readable. */}
+      <div className="page-text">
+        {isTabRoute ? (
+          tabContent
+        ) : (
+          <div className="max-w-2xl">{pageContent}</div>
+        )}
       </div>
     </div>
   );

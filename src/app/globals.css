@@ -1,12 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Only macOS ships Menlo, so other systems load the copy in public/fonts. */
 @layer base {
   @font-face {
-    font-family: Proxima Nova;
+    font-family: Menlo;
     font-weight: 400;
-    src: url(/fonts/Menlo/Menlo-Regular.ttf) format('truetype');
+    font-display: swap;
+    src:
+      local('Menlo-Regular'),
+      local('Menlo'),
+      url(/fonts/Menlo/Menlo-Regular.ttf) format('truetype');
+  }
+  @font-face {
+    font-family: Menlo;
+    font-weight: 700;
+    font-display: swap;
+    src:
+      local('Menlo-Bold'),
+      url(/fonts/Menlo/Menlo-Bold.ttf) format('truetype');
   }
 }
 
@@ -14,63 +27,71 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* The color modes. The footer button changes the `data-theme` attribute on
+   <html>. Values are space separated, so Tailwind opacity classes such as
+   `bg-accent/10` work. Light is also the `:root` default, so the page has
+   colors before the theme script runs. */
 @layer base {
   :root {
-    --background: #fff;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  .dark {
-    --background: 248.57, 11.48%, 11.96%;
-    /* --background: 0, 0%, 20%; */
-    --badge-background: 250, 11.54%, 20.39%;
-
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 250.59, 45.95%, 92.75%;
-    --primary-foreground: 0, 0%, 76.86%;
-    --secondary: 0, 0%, 69.02%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 248.57 9.68% 42.55%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+  /* Blue fountain-pen ink on newsprint. */
+  :root,
+  [data-theme='light'] {
+    --background: 45 18% 86%;
+    --foreground: 220 55% 22%;
+    --card: 45 18% 88%;
+    --card-foreground: 220 55% 22%;
+    --popover: 45 18% 88%;
+    --popover-foreground: 220 55% 22%;
+    --primary: 220 55% 22%;
+    --primary-foreground: 220 35% 32%;
+    --secondary: 220 25% 36%;
+    --secondary-foreground: 220 55% 22%;
+    --badge-background: 45 12% 78%;
+    --muted: 45 12% 78%;
+    --muted-foreground: 220 25% 36%;
+    --accent: 12 75% 38%;
+    --accent-foreground: 45 18% 86%;
+    --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 45 10% 70%;
+    --input: 45 10% 70%;
+    --ring: 12 75% 38%;
+    color-scheme: light;
   }
+  /* The same paper at night: cream ink on dark brown. */
+  [data-theme='dark'] {
+    --background: 30 14% 9%;
+    --foreground: 38 30% 86%;
+    --card: 30 14% 11%;
+    --card-foreground: 38 30% 86%;
+    --popover: 30 14% 11%;
+    --popover-foreground: 38 30% 86%;
+    --primary: 38 30% 86%;
+    --primary-foreground: 36 18% 70%;
+    --secondary: 34 12% 60%;
+    --secondary-foreground: 38 30% 86%;
+    --badge-background: 30 12% 16%;
+    --muted: 30 12% 16%;
+    --muted-foreground: 34 12% 60%;
+    --accent: 14 80% 62%;
+    --accent-foreground: 30 14% 9%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 10% 22%;
+    --input: 30 10% 22%;
+    --ring: 14 80% 62%;
+    color-scheme: dark;
+  }
+}
+
+/* The theme button runs a View Transition. The new mode grows as a circle
+   from the button (see theme-switcher.tsx), so the default crossfade is off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @layer base {
@@ -79,6 +100,138 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  /* Each pressable element has its own active state, so the grey tap flash
+     on mobile browsers only adds noise. */
+  a,
+  button,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* The page column. Its edges are on the outer edges of the layout grid. On
+   desktop (1024px and wider), the grid has 12 columns, a 24px gutter, a 48px
+   margin, and a 1200px maximum width. Narrower windows use an 18px margin. */
+@layer components {
+  .page-column {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 18px;
+  }
+  /* The content starts on the third column and ends on the tenth column.
+     One column and one gutter are (100% - 11 * 24px) / 12 + 24px, which is
+     (100% + 24px) / 12. */
+  @media (min-width: 1024px) {
+    .page-column {
+      max-width: calc(1200px + 2 * 48px);
+      padding-inline: 48px;
+    }
+    .page-text {
+      margin-inline: calc(2 * (100% + 24px) / 12);
+    }
+  }
+}
+
+/* The resume preview dialog. A closed dialog keeps its box (see
+   resume-pdf-dialog.tsx), so a plain transition animates the open. The close
+   has no transition, so it is instant. */
+@layer components {
+  .pdf-dialog {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  .pdf-dialog[open] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .pdf-dialog[open]::backdrop {
+    opacity: 1;
+    transition: opacity 200ms ease-out;
+  }
+  @starting-style {
+    .pdf-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pdf-dialog {
+      transform: none;
+    }
+  }
+}
+
+/* The entry animation on page load. The nav comes in first, then each child
+   of an `.enter-stagger` block comes in a little after the one before it. The
+   elements stay mounted when the tab changes, so the animation runs once. */
+@layer components {
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(2px);
+    }
+  }
+  @keyframes enter-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  .enter,
+  .enter-stagger > * {
+    animation: enter 500ms cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation-delay: calc(
+      var(--enter-delay, 0ms) + var(--enter-index, 0) * 60ms
+    );
+  }
+  .enter-fade {
+    animation: enter-fade 500ms ease-out both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+  /* The content starts after the nav. */
+  .enter-stagger {
+    --enter-delay: 100ms;
+  }
+  .enter-stagger > :nth-child(2) {
+    --enter-index: 1;
+  }
+  .enter-stagger > :nth-child(3) {
+    --enter-index: 2;
+  }
+  .enter-stagger > :nth-child(4) {
+    --enter-index: 3;
+  }
+  .enter-stagger > :nth-child(5) {
+    --enter-index: 4;
+  }
+  .enter-stagger > :nth-child(6) {
+    --enter-index: 5;
+  }
+  .enter-stagger > :nth-child(7) {
+    --enter-index: 6;
+  }
+  /* A long list stops at this delay, so the last items do not lag. */
+  .enter-stagger > :nth-child(n + 8) {
+    --enter-index: 7;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .enter,
+    .enter-stagger > * {
+      animation-name: enter-fade;
+    }
+  }
+  @media print {
+    .enter,
+    .enter-stagger > *,
+    .enter-fade {
+      animation: none;
+    }
   }
 }
 
@@ -92,7 +245,7 @@ body {
 
   /* Paper is white, so print always uses the light palette. */
   :root,
-  .dark {
+  [data-theme] {
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
     --primary: 0 0% 10%;

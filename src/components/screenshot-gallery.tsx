@@ -101,7 +101,8 @@ export default function ScreenshotGallery({
             type="button"
             onClick={() => open(i)}
             title={`Preview: ${item.alt}`}
-            className="overflow-hidden rounded-md border"
+            // `relative` lifts the thumbnail above the row link of the card.
+            className="relative overflow-hidden rounded-md border"
           >
             <Image
               src={item.src}
@@ -133,7 +134,7 @@ export default function ScreenshotGallery({
         className="m-0 flex flex-col w-screen h-[100dvh] max-w-none max-h-none p-0 overflow-hidden border-0 bg-background text-primary backdrop:bg-black/60 sm:m-auto sm:w-[min(92vw,72rem)] sm:h-auto sm:max-h-[88vh] sm:rounded-lg sm:border [&:not([open])]:invisible [&:not([open])]:fixed [&:not([open])]:inset-0"
       >
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
-          <p className="font-jetbrains-mono text-xs text-secondary truncate">
+          <p className="font-plex-mono text-xs text-secondary truncate">
             {shot?.alt}
           </p>
           <div className="flex items-center gap-4 shrink-0">
@@ -148,7 +149,7 @@ export default function ScreenshotGallery({
                 >
                   <ChevronLeft size={16} />
                 </button>
-                <span className="font-jetbrains-mono text-[10px] text-secondary">
+                <span className="font-plex-mono text-[10px] text-secondary">
                   {index + 1}/{screenshots.length}
                 </span>
                 <button
@@ -170,7 +171,7 @@ export default function ScreenshotGallery({
                 className="flex items-center gap-1 text-secondary hover:text-primary"
               >
                 <ExternalLink size={16} />
-                <span className="font-jetbrains-mono text-[10px]">open</span>
+                <span className="font-plex-mono text-[10px]">open</span>
               </a>
             )}
             <button

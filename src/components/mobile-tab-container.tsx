@@ -1,9 +1,22 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useMobileTab, TABS } from './mobile-tab-context';
 
-const SWIPE_THRESHOLD = 80;
+// A drag past this share of the width changes the tab.
+const DISTANCE_THRESHOLD = 0.25;
+// A flick faster than this (px per ms) changes the tab at any distance.
+const VELOCITY_THRESHOLD = 0.4;
+// A move this long (px) decides whether the gesture is a swipe or a scroll.
+const AXIS_LOCK_DISTANCE = 8;
+
+type Drag = {
+  startX: number;
+  startY: number;
+  startTime: number;
+  axis: 'x' | 'y' | null;
+  dx: number;
+};
 
 export function MobileTabContainer({
   aboutContent,
@@ -15,77 +28,119 @@ export function MobileTabContainer({
   resumeContent: React.ReactNode;
 }) {
   const { activeTab, setActiveTab } = useMobileTab();
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const scrollPositions = useRef<Record<string, number>>({});
-  const panelRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const trackRef = useRef<HTMLDivElement>(null);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const drag = useRef<Drag | null>(null);
+  const [height, setHeight] = useState<number>();
 
   const activeIndex = TABS.indexOf(activeTab);
 
-  const handleTabChange = useCallback(
-    (tab: (typeof TABS)[number]) => {
-      // Save current tab's scroll position
-      const currentPanel = panelRefs.current[activeTab];
-      if (currentPanel) {
-        scrollPositions.current[activeTab] = window.scrollY;
-      }
+  /* The panels sit side by side, so without a fixed height the strip takes the
+     height of the longest panel and a short tab scrolls into empty space. */
+  useLayoutEffect(() => {
+    const panel = panelRefs.current[activeIndex];
+    if (!panel) return;
+    setHeight(panel.offsetHeight);
+    const observer = new ResizeObserver(() => setHeight(panel.offsetHeight));
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, [activeIndex]);
 
-      setActiveTab(tab);
-
-      // Restore new tab's scroll position
-      requestAnimationFrame(() => {
-        const savedY = scrollPositions.current[tab] ?? 0;
-        window.scrollTo(0, savedY);
-      });
+  /* The drag writes the transform straight to the track, so a touch move does
+     not render React or restyle the panels. */
+  const setTrackOffset = useCallback(
+    (dx: number, animate: boolean) => {
+      const track = trackRef.current;
+      if (!track) return;
+      track.style.transition = animate ? '' : 'none';
+      track.style.transform = `translateX(calc(${-activeIndex * 100}% + ${dx}px))`;
     },
-    [activeTab, setActiveTab],
+    [activeIndex],
   );
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
+    // A second finger must not restart a drag that is already in progress.
+    if (drag.current || e.touches.length > 1) return;
+    const touch = e.touches[0];
+    drag.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startTime: performance.now(),
+      axis: null,
+      dx: 0,
+    };
   }, []);
 
-  const handleTouchEnd = useCallback(
+  const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
-      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
-      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+      const state = drag.current;
+      if (!state) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - state.startX;
+      const dy = touch.clientY - state.startY;
 
-      // Ignore if vertical swipe is dominant
-      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
-      if (Math.abs(deltaX) < SWIPE_THRESHOLD) return;
-
-      const currentIndex = TABS.indexOf(activeTab);
-
-      if (deltaX < 0 && currentIndex < TABS.length - 1) {
-        // Swipe left -> next tab
-        handleTabChange(TABS[currentIndex + 1]);
-      } else if (deltaX > 0 && currentIndex > 0) {
-        // Swipe right -> previous tab
-        handleTabChange(TABS[currentIndex - 1]);
+      if (!state.axis) {
+        if (Math.hypot(dx, dy) < AXIS_LOCK_DISTANCE) return;
+        state.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
       }
+      if (state.axis !== 'x') return;
+
+      // Past the first or the last tab, the strip resists the drag.
+      const atEdge =
+        (dx > 0 && activeIndex === 0) ||
+        (dx < 0 && activeIndex === TABS.length - 1);
+      state.dx = atEdge ? dx * 0.2 : dx;
+      setTrackOffset(state.dx, false);
     },
-    [activeTab, handleTabChange],
+    [activeIndex, setTrackOffset],
   );
+
+  const handleTouchEnd = useCallback(() => {
+    const state = drag.current;
+    drag.current = null;
+    if (!state || state.axis !== 'x') return;
+
+    const width = trackRef.current?.offsetWidth ?? window.innerWidth;
+    const velocity = Math.abs(state.dx) / (performance.now() - state.startTime);
+    const passed =
+      Math.abs(state.dx) > width * DISTANCE_THRESHOLD ||
+      velocity > VELOCITY_THRESHOLD;
+    const next = activeIndex + (state.dx < 0 ? 1 : -1);
+
+    // React keeps the inline transform, so the track settles on the new tab
+    // with the class transition.
+    setTrackOffset(0, true);
+    if (passed && next >= 0 && next < TABS.length) {
+      setActiveTab(TABS[next]);
+    }
+  }, [activeIndex, setActiveTab, setTrackOffset]);
 
   const panels = [aboutContent, projectsContent, resumeContent];
 
   return (
     <div
-      className="overflow-hidden"
+      className="overflow-hidden touch-pan-y touch-pinch-zoom"
+      style={{ height }}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
+      {/* A click on desktop switches the tab at once, as a native tab does. On
+          a phone the strip slides, so the motion matches the swipe. */}
       <div
-        className="flex transition-transform duration-300 ease-out"
-        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+        ref={trackRef}
+        className="flex items-start transition-transform [transition-duration:250ms] ease-drawer will-change-transform motion-reduce:duration-0 md:duration-0"
+        style={{ transform: `translateX(${-activeIndex * 100}%)` }}
       >
         {panels.map((content, i) => (
           <div
             key={TABS[i]}
             ref={(el) => {
-              panelRefs.current[TABS[i]] = el;
+              panelRefs.current[i] = el;
             }}
+            // Off-screen panels stay out of the tab order and screen readers.
+            inert={i !== activeIndex}
             className="w-full flex-shrink-0"
           >
             {content}

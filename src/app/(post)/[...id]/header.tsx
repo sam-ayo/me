@@ -19,7 +19,7 @@ export const Header = ({ post }: { post: PostContent }) => {
       <h1 className="text-2xl font-bold mb-2 dark:text-gray-100">
         <div> {post.title}</div>
       </h1>
-      <p className="font-mono flex text-xs text-gray-500 dark:text-gray-500">
+      <p className="font-plex-mono flex text-xs text-gray-500 dark:text-gray-500">
         <span className="flex-grow">
           <span className="hidden md:inline">
             <span>
