@@ -86,7 +86,7 @@ const NavUnderline = ({
      changes no layout, and its edges stay sharp at each frame. */
   return (
     <div
-      className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current transition-[clip-path] duration-300 ease-out motion-reduce:transition-none"
+      className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current transition-[clip-path] duration-200 ease-drawer motion-reduce:transition-none"
       style={{
         clipPath: `inset(0 ${pos.right}px 0 ${pos.left}px)`,
       }}
