@@ -4,10 +4,13 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   animate,
+  cancelFrame,
+  frame,
   motion,
   useMotionValue,
   useReducedMotion,
   useTransform,
+  type AnimationPlaybackControls,
   type MotionValue,
 } from 'motion/react';
 import {
@@ -88,14 +91,26 @@ const NavUnderline = ({
      starts at full speed, so the bar jumped about 40% of the distance in the
      first frame. The spring starts at rest. */
   const ownPosition = useMotionValue(-activeIndex);
+  const controls = useRef<AnimationPlaybackControls | null>(null);
+  useEffect(() => () => controls.current?.stop(), []);
   useEffect(() => {
     if (position) return;
     if (reducedMotion) {
+      controls.current?.stop();
       ownPosition.jump(-activeIndex);
       return;
     }
-    const controls = animate(ownPosition, -activeIndex, CLICK_SPRING);
-    return () => controls.stop();
+    /* A click renders the new tab, and that work can delay the next frame.
+       A spring that starts in the click counts that delay, so the bar jumped
+       about a third of the distance in its first frame (more in Brave). The
+       spring starts in the next frame, and the bar moves from there. Until
+       then the last spring keeps the bar in motion, so the new spring starts
+       with its speed. */
+    const start = () => {
+      controls.current = animate(ownPosition, -activeIndex, CLICK_SPRING);
+    };
+    frame.update(start);
+    return () => cancelFrame(start);
   }, [position, ownPosition, activeIndex, reducedMotion]);
 
   const measure = useCallback(() => {
