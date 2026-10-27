@@ -3,7 +3,13 @@
 import { Download, FileText, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
+import type {
+  PDFDocumentProxy,
+  PDFPageProxy,
+  PageViewport,
+  RenderTask,
+  TextLayer,
+} from 'pdfjs-dist';
 import { pdfFileName } from '@/lib/resume-data';
 
 const PDF_URL = '/api/resume';
@@ -16,13 +22,49 @@ const PAGE_WIDTH = 816;
    page and Android shows nothing. pdf.js draws each page on a canvas instead,
    which works the same in all browsers. The legacy build supports older mobile
    browsers. */
+const importPdfjs = () => import('pdfjs-dist/legacy/build/pdf.mjs');
+
 async function loadPdf() {
-  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const pdfjs = await importPdfjs();
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/legacy/build/pdf.worker.min.mjs',
     import.meta.url,
   ).toString();
   return pdfjs.getDocument({ url: PDF_URL });
+}
+
+/* A canvas holds only pixels, so the links in the PDF do not work on it. Each
+   link gets a transparent anchor at the same place on the page. */
+async function renderLinks(
+  page: PDFPageProxy,
+  viewport: PageViewport,
+  layer: HTMLElement,
+) {
+  const annotations = await page.getAnnotations({ intent: 'display' });
+  const links = annotations.flatMap((annotation) => {
+    if (annotation.subtype !== 'Link' || !annotation.url) return [];
+
+    const [left, bottom, right, top] = annotation.rect;
+    const [x1, y1] = viewport.convertToViewportPoint(left, bottom);
+    const [x2, y2] = viewport.convertToViewportPoint(right, top);
+    const link = document.createElement('a');
+    link.href = annotation.url;
+    if (link.protocol.startsWith('http')) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    // The text layer already reads the link text, so the anchor names its
+    // target instead.
+    link.setAttribute('aria-label', annotation.url.replace(/^mailto:/, ''));
+    Object.assign(link.style, {
+      left: `${Math.min(x1, x2)}px`,
+      top: `${Math.min(y1, y2)}px`,
+      width: `${Math.abs(x2 - x1)}px`,
+      height: `${Math.abs(y2 - y1)}px`,
+    });
+    return [link];
+  });
+  layer.replaceChildren(...links);
 }
 
 /**
@@ -39,7 +81,7 @@ async function loadPdf() {
 export default function ResumePdfDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const pageRefs = useRef<(HTMLDivElement | null)[]>([]);
   // The closed dialog keeps its box, so `inert` keeps the hidden pages out of
   // the tab order and the accessibility tree.
   const [isOpen, setIsOpen] = useState(false);
@@ -110,35 +152,59 @@ export default function ResumePdfDialog() {
 
   const pageWidth = Math.min(bodyWidth, PAGE_WIDTH);
 
-  // A new width draws each page again at the new size. The canvas holds one
-  // pixel for each device pixel, so the text stays sharp on a dense screen.
+  /* A new width draws each page again at the new size. The canvas holds one
+     pixel for each device pixel, so the text stays sharp on a dense screen.
+     Over the canvas, a transparent text layer from pdf.js gives the page text
+     to screen readers and to text selection, and a link layer makes the
+     links work. */
   useEffect(() => {
     if (!pdf || pageWidth <= 0) return;
 
     let cancelled = false;
-    const tasks: RenderTask[] = [];
+    const tasks: (RenderTask | TextLayer)[] = [];
     const ratio = window.devicePixelRatio || 1;
 
     for (let index = 0; index < pdf.numPages; index++) {
-      pdf.getPage(index + 1).then((page) => {
-        const canvas = canvasRefs.current[index];
-        if (cancelled || !canvas) return;
+      Promise.all([pdf.getPage(index + 1), importPdfjs()]).then(
+        ([page, { TextLayer }]) => {
+          const wrapper = pageRefs.current[index];
+          const canvas = wrapper?.querySelector('canvas');
+          const textLayer = wrapper?.querySelector<HTMLElement>('.pdf-text');
+          const linkLayer = wrapper?.querySelector<HTMLElement>('.pdf-links');
+          if (cancelled || !wrapper || !canvas || !textLayer || !linkLayer) {
+            return;
+          }
 
-        const base = page.getViewport({ scale: 1 });
-        const viewport = page.getViewport({
-          scale: (pageWidth / base.width) * ratio,
-        });
-        canvas.width = Math.floor(viewport.width);
-        canvas.height = Math.floor(viewport.height);
-        canvas.style.width = `${pageWidth}px`;
-        canvas.style.height = `${Math.floor(viewport.height / ratio)}px`;
+          const scale = pageWidth / page.getViewport({ scale: 1 }).width;
+          const viewport = page.getViewport({ scale });
+          const pixels = page.getViewport({ scale: scale * ratio });
+          canvas.width = Math.floor(pixels.width);
+          canvas.height = Math.floor(pixels.height);
+          wrapper.style.width = `${pageWidth}px`;
+          wrapper.style.height = `${Math.floor(viewport.height)}px`;
+          wrapper.style.setProperty('--total-scale-factor', `${scale}`);
 
-        const task = page.render({ canvas, viewport });
-        tasks.push(task);
-        task.promise.catch(() => {
-          // A cancelled render rejects, and the next render replaces it.
-        });
-      });
+          const render = page.render({ canvas, viewport: pixels });
+          render.promise.catch(() => {
+            // A cancelled render rejects, and the next render replaces it.
+          });
+
+          textLayer.replaceChildren();
+          const text = new TextLayer({
+            textContentSource: page.streamTextContent(),
+            container: textLayer,
+            viewport,
+          });
+          text.render().catch(() => {
+            // A cancelled text layer rejects, and the next one replaces it.
+          });
+
+          tasks.push(render, text);
+          renderLinks(page, viewport, linkLayer).catch((error) =>
+            console.error('Failed to read the resume PDF links', error),
+          );
+        },
+      );
     }
 
     return () => {
@@ -210,15 +276,21 @@ export default function ResumePdfDialog() {
             style={{ width: pageWidth }}
           >
             {Array.from({ length: pdf?.numPages ?? 0 }, (_, index) => (
-              <canvas
+              <div
                 key={index}
                 ref={(node) => {
-                  canvasRefs.current[index] = node;
+                  pageRefs.current[index] = node;
                 }}
-                role="img"
+                role="group"
                 aria-label={`Resume page ${index + 1}`}
-                className="block bg-white shadow-sm"
-              />
+                className="relative bg-white shadow-sm"
+              >
+                <canvas aria-hidden className="block size-full" />
+                {/* pdf.js and `renderLinks` fill these layers, so React
+                    renders them empty and never reads their children. */}
+                <div className="pdf-text" />
+                <div className="pdf-links" />
+              </div>
             ))}
           </div>
         </div>

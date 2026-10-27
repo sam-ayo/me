@@ -187,6 +187,58 @@ body {
       transform: none;
     }
   }
+
+  /* The text layer over each page, from `.textLayer` in
+     pdfjs-dist/web/pdf_viewer.css. The text is transparent, so the canvas
+     shows through it. pdf.js sets `--min-font-size` and each span's
+     `--font-height`, `--scale-x`, and `--rotate`. The page sets
+     `--total-scale-factor`. */
+  .pdf-text {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    line-height: 1;
+    text-align: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    forced-color-adjust: none;
+    --min-font-size: 1;
+    --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+    --min-font-size-inv: calc(1 / var(--min-font-size));
+  }
+  .pdf-text :is(span, br) {
+    position: absolute;
+    color: transparent;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+    user-select: text;
+  }
+  .pdf-text > :not(.markedContent),
+  .pdf-text .markedContent span:not(.markedContent) {
+    --font-height: 0;
+    --scale-x: 1;
+    --rotate: 0deg;
+    font-size: calc(var(--text-scale-factor) * var(--font-height));
+    transform: rotate(var(--rotate)) scaleX(var(--scale-x))
+      scale(var(--min-font-size-inv));
+  }
+  .pdf-text .markedContent {
+    display: contents;
+  }
+
+  /* The link layer sits over the text layer, so a tap on a link opens it. */
+  .pdf-links {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .pdf-links a {
+    position: absolute;
+    pointer-events: auto;
+  }
 }
 
 /* The entry animation on page load. The nav comes in first, then each child
