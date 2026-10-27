@@ -54,8 +54,8 @@ export const contacts: Contact[] = [
   },
   {
     label: 'linkedin',
-    href: 'https://www.linkedin.com/in/sam-ayo-adeoye/',
-    print: 'linkedin.com/in/sam-ayo-adeoye',
+    href: 'https://www.linkedin.com/in/sam--ayo',
+    print: 'linkedin.com/in/sam--ayo',
   },
   {
     label: 'github',

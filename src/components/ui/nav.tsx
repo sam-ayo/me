@@ -180,7 +180,7 @@ const SOCIALS = [
   },
   {
     label: 'linkedin.com',
-    href: 'https://www.linkedin.com/in/sam-ayo-adeoye/',
+    href: 'https://www.linkedin.com/in/sam--ayo',
     viewBox: '0 0 17 17',
     iconClass: 'size-5',
     path: (
