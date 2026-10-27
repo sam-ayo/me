@@ -3,12 +3,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
+  animate,
   motion,
-  motionValue,
+  useMotionValue,
+  useReducedMotion,
   useTransform,
   type MotionValue,
 } from 'motion/react';
-import { useMobileTab, TabName } from '@/components/mobile-tab-context';
+import {
+  useMobileTab,
+  SPRING,
+  TabName,
+} from '@/components/mobile-tab-context';
 
 const NavItem = ({
   text,
@@ -72,6 +78,21 @@ const NavUnderline = ({
   position?: MotionValue<number>;
 }) => {
   const [edges, setEdges] = useState<Edges[] | null>(null);
+  const reducedMotion = useReducedMotion();
+
+  /* Without a tab strip, the bar moves with the same spring as the strip. An
+     ease-out curve starts at full speed, so the bar jumped about 40% of the
+     distance in the first frame. The spring starts at rest. */
+  const ownPosition = useMotionValue(-activeIndex);
+  useEffect(() => {
+    if (position) return;
+    if (reducedMotion) {
+      ownPosition.jump(-activeIndex);
+      return;
+    }
+    const controls = animate(ownPosition, -activeIndex, SPRING);
+    return () => controls.stop();
+  }, [position, ownPosition, activeIndex, reducedMotion]);
 
   const measure = useCallback(() => {
     const container = containerRef.current;
@@ -105,7 +126,7 @@ const NavUnderline = ({
   /* During a swipe the bar goes between the two items in the same ratio as
      the strip goes between the two panels. Past an edge, the bar stays on
      the edge item. */
-  const followClip = useTransform(position ?? NO_POSITION, (p) => {
+  const clip = useTransform(position ?? ownPosition, (p) => {
     if (!edges) return 'inset(0 100% 0 0)';
     const at = Math.min(Math.max(-p, 0), edges.length - 1);
     const from = edges[Math.floor(at)];
@@ -119,25 +140,13 @@ const NavUnderline = ({
 
   if (!edges || !edges[activeIndex]) return null;
 
-  if (position) {
-    return (
-      <motion.div
-        className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current"
-        style={{ clipPath: followClip }}
-      />
-    );
-  }
-
   return (
-    <div
-      className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current transition-[clip-path] duration-300 ease-out motion-reduce:transition-none"
-      style={{ clipPath: clipOf(edges[activeIndex]) }}
+    <motion.div
+      className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current"
+      style={{ clipPath: clip }}
     />
   );
 };
-
-// A hook cannot be skipped, so a menu with no tab strip reads this value.
-const NO_POSITION = motionValue(0);
 
 /* The glyphs are inline, so they take the text color and need no image
    request. GitHub and LinkedIn fill a circle, but X is a bare glyph that

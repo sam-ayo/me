@@ -93,3 +93,14 @@ export function useMobileTab() {
 }
 
 export const TABS: TabName[] = ['about', 'projects', 'resume'];
+
+/* A critically damped spring has no bounce, so the strip and the nav bar stop
+   on the tab. The rest values are small because the position unit is one
+   panel width. */
+export const SPRING = {
+  type: 'spring',
+  visualDuration: 0.35,
+  bounce: 0,
+  restDelta: 0.001,
+  restSpeed: 0.01,
+} as const;

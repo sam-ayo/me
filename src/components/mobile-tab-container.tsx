@@ -12,7 +12,7 @@ import {
   useLayoutEffect,
   useRef,
 } from 'react';
-import { useMobileTab, TABS, TAB_PATHS } from './mobile-tab-context';
+import { useMobileTab, SPRING, TABS, TAB_PATHS } from './mobile-tab-context';
 import {
   getScrollPositions,
   saveScrollPosition,
@@ -24,17 +24,6 @@ const AXIS_LOCK_DISTANCE = 8;
 const VELOCITY_WINDOW = 100;
 // The deceleration of a flick, as in the iOS scroll view.
 const DECELERATION_RATE = 0.998;
-
-/* A critically damped spring has no bounce, so the strip stops on the tab.
-   The spring starts at the finger velocity, so a release has no seam. The
-   rest values are small because the position unit is one panel width. */
-const SPRING = {
-  type: 'spring',
-  visualDuration: 0.35,
-  bounce: 0,
-  restDelta: 0.001,
-  restSpeed: 0.01,
-} as const;
 
 // The desktop switches the tab at once, as a native tab does.
 const INSTANT_QUERY = '(min-width: 768px), (prefers-reduced-motion: reduce)';
@@ -142,6 +131,7 @@ export function MobileTabContainer({
       spring.current?.stop();
       spring.current = animate(position, -index, {
         ...SPRING,
+        // The spring starts at the finger velocity, so a release has no seam.
         velocity,
         onComplete: () => {
           spring.current = null;
