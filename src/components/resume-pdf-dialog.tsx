@@ -3,17 +3,27 @@
 import { Download, FileText, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { pdfFileName } from '@/lib/resume-data';
 
 const PDF_URL = '/api/resume';
 
-/* The viewer chrome duplicates the dialog header, so the frame hides it. */
-const PREVIEW_URL = `${PDF_URL}#toolbar=0&navpanes=0&view=FitH`;
-
-/* The width of a letter page at 96dpi. A mobile viewer lays a framed PDF out at
-   the page width and crops the overflow, so the frame keeps this width and CSS
-   scales the frame down to the modal. */
+/* The width of a letter page at 96dpi. A wide modal shows the page at this
+   size and does not stretch it. */
 const PAGE_WIDTH = 816;
+
+/* Mobile browsers do not render a PDF in a frame: iOS shows only a static first
+   page and Android shows nothing. pdf.js draws each page on a canvas instead,
+   which works the same in all browsers. The legacy build supports older mobile
+   browsers. */
+async function loadPdf() {
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/legacy/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
+  return pdfjs.getDocument({ url: PDF_URL });
+}
 
 /**
  * Previews the resume PDF in a modal, with a download link beside it.
@@ -23,16 +33,18 @@ const PAGE_WIDTH = 816;
  * Escape without a key handler.
  *
  * A closed dialog normally has no box. This one keeps a hidden box at the size
- * of the open modal, so the frame loads and paints the PDF before the reader
- * asks for it and the open shows the finished page with no flash.
+ * of the open modal, so the pages load and paint before the reader asks for
+ * them and the open shows the finished pages with no flash.
  */
 export default function ResumePdfDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-  // The closed dialog keeps its box, so `inert` keeps the hidden frame out of
+  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  // The closed dialog keeps its box, so `inert` keeps the hidden pages out of
   // the tab order and the accessibility tree.
   const [isOpen, setIsOpen] = useState(false);
-  const [body, setBody] = useState({ width: 0, height: 0 });
+  const [bodyWidth, setBodyWidth] = useState(0);
+  const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
 
   const open = useCallback(() => {
     // The dialog must leave the inert state before `showModal` moves focus into it.
@@ -63,23 +75,77 @@ export default function ResumePdfDialog() {
     return () => document.body.classList.remove('overflow-hidden');
   }, []);
 
-  // The body sizes itself from the dialog, never from the frame, so the frame
-  // cannot feed its own measurement back into a loop.
+  useEffect(() => {
+    let cancelled = false;
+    const loading = loadPdf();
+
+    loading
+      .then((task) => task.promise)
+      .then((doc) => {
+        if (!cancelled) setPdf(doc);
+      })
+      .catch((error) => {
+        if (!cancelled) console.error('Failed to load the resume PDF', error);
+      });
+
+    // Destroying the loading task also destroys its document and worker.
+    return () => {
+      cancelled = true;
+      loading.then((task) => task.destroy());
+    };
+  }, []);
+
+  // The scroll bar takes no width in the body, because `scrollbar-gutter`
+  // keeps its space, so the pages cannot feed their height back into a loop.
   useEffect(() => {
     const node = bodyRef.current;
     if (!node) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setBody({ width: Math.round(width), height: Math.round(height) });
+      setBodyWidth(Math.floor(entry.contentRect.width));
     });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
 
-  /* A modal wider than the page shows the page at its own size. A narrower one
-     shrinks the whole frame, so a scaled frame still covers the body exactly. */
-  const scale = body.width > 0 ? Math.min(1, body.width / PAGE_WIDTH) : 1;
+  const pageWidth = Math.min(bodyWidth, PAGE_WIDTH);
+
+  // A new width draws each page again at the new size. The canvas holds one
+  // pixel for each device pixel, so the text stays sharp on a dense screen.
+  useEffect(() => {
+    if (!pdf || pageWidth <= 0) return;
+
+    let cancelled = false;
+    const tasks: RenderTask[] = [];
+    const ratio = window.devicePixelRatio || 1;
+
+    for (let index = 0; index < pdf.numPages; index++) {
+      pdf.getPage(index + 1).then((page) => {
+        const canvas = canvasRefs.current[index];
+        if (cancelled || !canvas) return;
+
+        const base = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({
+          scale: (pageWidth / base.width) * ratio,
+        });
+        canvas.width = Math.floor(viewport.width);
+        canvas.height = Math.floor(viewport.height);
+        canvas.style.width = `${pageWidth}px`;
+        canvas.style.height = `${Math.floor(viewport.height / ratio)}px`;
+
+        const task = page.render({ canvas, viewport });
+        tasks.push(task);
+        task.promise.catch(() => {
+          // A cancelled render rejects, and the next render replaces it.
+        });
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      tasks.forEach((task) => task.cancel());
+    };
+  }, [pdf, pageWidth]);
 
   return (
     <>
@@ -137,32 +203,25 @@ export default function ResumePdfDialog() {
 
         <div
           ref={bodyRef}
-          className="flex-1 min-h-0 overflow-hidden bg-badge-background"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain [scrollbar-gutter:stable] bg-badge-background p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6"
         >
-          {body.width > 0 && (
-            <iframe
-              src={PREVIEW_URL}
-              title="Resume PDF preview"
-              className="border-0 origin-top-left"
-              style={{
-                width: body.width / scale,
-                height: body.height / scale,
-                transform: `scale(${scale})`,
-              }}
-            />
-          )}
+          <div
+            className="mx-auto flex flex-col gap-3 sm:gap-6"
+            style={{ width: pageWidth }}
+          >
+            {Array.from({ length: pdf?.numPages ?? 0 }, (_, index) => (
+              <canvas
+                key={index}
+                ref={(node) => {
+                  canvasRefs.current[index] = node;
+                }}
+                role="img"
+                aria-label={`Resume page ${index + 1}`}
+                className="block bg-white shadow-sm"
+              />
+            ))}
+          </div>
         </div>
-
-        {/* Mobile browsers render a framed PDF as a single static page, so the
-            reader needs a way to reach the full document. */}
-        <a
-          href={PDF_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="border-t px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] font-plex-mono text-[10px] text-secondary transition-colors hover:text-primary sm:hidden"
-        >
-          open the full PDF in a new tab ↗
-        </a>
       </dialog>
     </>
   );
