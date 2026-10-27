@@ -86,6 +86,18 @@ body {
   }
 }
 
+/* No scroll bars. The page and other scroll areas still scroll with the
+   wheel, the trackpad, touch, and the keyboard. Safari and older Chrome use
+   the webkit rule. Firefox and newer Chrome use `scrollbar-width`. */
+@layer base {
+  * {
+    scrollbar-width: none;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* The theme button runs a View Transition. The new mode grows as a circle
    from the button (see theme-switcher.tsx), so the default crossfade is off. */
 ::view-transition-old(root),
