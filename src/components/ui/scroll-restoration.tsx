@@ -2,10 +2,11 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { pathnameToTab } from '@/components/mobile-tab-context';
 
 const STORAGE_KEY = 'scroll-positions';
 
-function getScrollPositions(): Record<string, number> {
+export function getScrollPositions(): Record<string, number> {
   try {
     return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}');
   } catch {
@@ -13,9 +14,9 @@ function getScrollPositions(): Record<string, number> {
   }
 }
 
-function saveScrollPosition(path: string) {
+export function saveScrollPosition(path: string, y = window.scrollY) {
   const positions = getScrollPositions();
-  positions[path] = window.scrollY;
+  positions[path] = y;
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
 }
 
@@ -57,9 +58,16 @@ export function ScrollRestoration() {
 
   useEffect(() => {
     if (pathname !== prevPathname.current) {
-      requestAnimationFrame(() => {
-        restoreScrollPosition(pathname);
-      });
+      // The tab strip scrolls in the same frame as its slide starts, so it
+      // restores the scroll position for a change between two tabs.
+      const betweenTabs =
+        pathnameToTab(pathname) !== null &&
+        pathnameToTab(prevPathname.current) !== null;
+      if (!betweenTabs) {
+        requestAnimationFrame(() => {
+          restoreScrollPosition(pathname);
+        });
+      }
       prevPathname.current = pathname;
     }
   }, [pathname]);
