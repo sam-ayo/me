@@ -111,6 +111,16 @@ body {
   summary {
     -webkit-tap-highlight-color: transparent;
   }
+  /* Below the md breakpoint the mobile nav shows, so no element shows a
+     scroll bar. The content still scrolls. */
+  @media (max-width: 767px) {
+    * {
+      scrollbar-width: none;
+    }
+    *::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 /* The page column. Its edges are on the outer edges of the layout grid. On
