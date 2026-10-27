@@ -218,8 +218,10 @@ export default async function ProjectsList() {
       : project,
   );
 
+  // Each row has 12px of top padding for its hover background. The smaller top
+  // margin moves the first title to the same height as on the other tabs.
   return (
-    <div className="flex flex-col gap-4 mt-4 md:mt-8">
+    <div className="flex flex-col gap-4 mt-1 md:mt-5">
       <div className="enter-stagger flex flex-col gap-1">
         {list.map((project) => (
           <ProjectPreview key={project.id} project={project} />
