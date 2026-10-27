@@ -58,6 +58,10 @@ const NavItem = ({
 
 type Edges = { left: number; right: number };
 
+// A click moves the bar with no finger to follow, so it can move faster than
+// the strip does after a swipe.
+const CLICK_SPRING = { ...SPRING, visualDuration: 0.2 };
+
 // The clip of the underline from the edges of the item that it shows under.
 const clipOf = ({ left, right }: Edges) => `inset(0 ${right}px 0 ${left}px)`;
 
@@ -80,9 +84,9 @@ const NavUnderline = ({
   const [edges, setEdges] = useState<Edges[] | null>(null);
   const reducedMotion = useReducedMotion();
 
-  /* Without a tab strip, the bar moves with the same spring as the strip. An
-     ease-out curve starts at full speed, so the bar jumped about 40% of the
-     distance in the first frame. The spring starts at rest. */
+  /* Without a tab strip, the bar moves with a spring. An ease-out curve
+     starts at full speed, so the bar jumped about 40% of the distance in the
+     first frame. The spring starts at rest. */
   const ownPosition = useMotionValue(-activeIndex);
   useEffect(() => {
     if (position) return;
@@ -90,7 +94,7 @@ const NavUnderline = ({
       ownPosition.jump(-activeIndex);
       return;
     }
-    const controls = animate(ownPosition, -activeIndex, SPRING);
+    const controls = animate(ownPosition, -activeIndex, CLICK_SPRING);
     return () => controls.stop();
   }, [position, ownPosition, activeIndex, reducedMotion]);
 
