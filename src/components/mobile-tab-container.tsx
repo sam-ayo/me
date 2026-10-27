@@ -3,7 +3,6 @@
 import {
   animate,
   motion,
-  useMotionValue,
   useTransform,
   type AnimationPlaybackControls,
 } from 'motion/react';
@@ -12,7 +11,6 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
 } from 'react';
 import { useMobileTab, TABS, TAB_PATHS } from './mobile-tab-context';
 import {
@@ -77,7 +75,7 @@ export function MobileTabContainer({
   projectsContent: React.ReactNode;
   resumeContent: React.ReactNode;
 }) {
-  const { activeTab, setActiveTab } = useMobileTab();
+  const { activeTab, setActiveTab, position } = useMobileTab();
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -92,8 +90,6 @@ export function MobileTabContainer({
   /* The position is the strip offset in panel widths, so a window resize
      does not move the strip off the tab. React sets the transform only from
      the motion value, so a render does not stop the spring. */
-  const [initialIndex] = useState(activeIndex);
-  const position = useMotionValue(-initialIndex);
   const transform = useTransform(position, (p) => `translateX(${p * 100}%)`);
 
   /* The panels sit side by side, so without a fixed height the strip takes
@@ -155,6 +151,12 @@ export function MobileTabContainer({
     },
     [position, startMoving, stopMoving],
   );
+
+  // The provider keeps the position when a page that is not a tab shows, so
+  // the strip starts again on the shown tab.
+  useLayoutEffect(() => {
+    position.jump(-shownIndex.current);
+  }, [position]);
 
   useLayoutEffect(() => {
     fitHeight();

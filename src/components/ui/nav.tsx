@@ -2,6 +2,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useCallback } from 'react';
+import {
+  motion,
+  motionValue,
+  useTransform,
+  type MotionValue,
+} from 'motion/react';
 import { useMobileTab, TabName } from '@/components/mobile-tab-context';
 
 const NavItem = ({
@@ -44,25 +50,43 @@ const NavItem = ({
   );
 };
 
-// Single underline component that measures active item position relative to container
+type Edges = { left: number; right: number };
+
+// The clip of the underline from the edges of the item that it shows under.
+const clipOf = ({ left, right }: Edges) => `inset(0 ${right}px 0 ${left}px)`;
+
+/* The bar is as wide as the menu, and a clip shows only the part under the
+   active item. A 1px bar stretched with scaleX is too long on a phone: the
+   GPU stretches the pixel edge of the bar with the same scale. The clip
+   changes no layout, and its edges stay sharp at each frame. */
 const NavUnderline = ({
   containerRef,
-  activeItemRef,
+  itemEls,
+  activeIndex,
+  position,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
-  activeItemRef: HTMLElement | null;
+  itemEls: (HTMLElement | null)[];
+  activeIndex: number;
+  // The tab strip offset. Without it, the bar moves only on a tab change.
+  position?: MotionValue<number>;
 }) => {
-  const [pos, setPos] = useState<{ left: number; right: number } | null>(null);
+  const [edges, setEdges] = useState<Edges[] | null>(null);
 
   const measure = useCallback(() => {
-    if (!activeItemRef || !containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const itemRect = activeItemRef.getBoundingClientRect();
-    setPos({
-      left: itemRect.left - containerRect.left,
-      right: containerRect.right - itemRect.right,
-    });
-  }, [activeItemRef, containerRef]);
+    const container = containerRef.current;
+    if (!container || itemEls.some((el) => !el)) return;
+    const containerRect = container.getBoundingClientRect();
+    setEdges(
+      itemEls.map((el) => {
+        const itemRect = el!.getBoundingClientRect();
+        return {
+          left: itemRect.left - containerRect.left,
+          right: containerRect.right - itemRect.right,
+        };
+      }),
+    );
+  }, [itemEls, containerRef]);
 
   useEffect(() => {
     measure();
@@ -74,25 +98,46 @@ const NavUnderline = ({
     if (!container) return;
     const observer = new ResizeObserver(() => measure());
     observer.observe(container);
-    if (activeItemRef) observer.observe(activeItemRef);
+    itemEls.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
-  }, [measure, containerRef, activeItemRef]);
+  }, [measure, containerRef, itemEls]);
 
-  if (!pos) return null;
+  /* During a swipe the bar goes between the two items in the same ratio as
+     the strip goes between the two panels. Past an edge, the bar stays on
+     the edge item. */
+  const followClip = useTransform(position ?? NO_POSITION, (p) => {
+    if (!edges) return 'inset(0 100% 0 0)';
+    const at = Math.min(Math.max(-p, 0), edges.length - 1);
+    const from = edges[Math.floor(at)];
+    const to = edges[Math.ceil(at)];
+    const t = at - Math.floor(at);
+    return clipOf({
+      left: from.left + (to.left - from.left) * t,
+      right: from.right + (to.right - from.right) * t,
+    });
+  });
 
-  /* The bar is as wide as the menu, and a clip shows only the part under the
-     active item. A 1px bar stretched with scaleX is too long on a phone: the
-     GPU stretches the pixel edge of the bar with the same scale. The clip
-     changes no layout, and its edges stay sharp at each frame. */
+  if (!edges || !edges[activeIndex]) return null;
+
+  if (position) {
+    return (
+      <motion.div
+        className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current"
+        style={{ clipPath: followClip }}
+      />
+    );
+  }
+
   return (
     <div
       className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current transition-[clip-path] duration-300 ease-out motion-reduce:transition-none"
-      style={{
-        clipPath: `inset(0 ${pos.right}px 0 ${pos.left}px)`,
-      }}
+      style={{ clipPath: clipOf(edges[activeIndex]) }}
     />
   );
 };
+
+// A hook cannot be skipped, so a menu with no tab strip reads this value.
+const NO_POSITION = motionValue(0);
 
 /* The glyphs are inline, so they take the text color and need no image
    request. GitHub and LinkedIn fill a circle, but X is a bare glyph that
@@ -215,18 +260,19 @@ const NavMenu = ({
   items,
   className,
   onTabClick,
+  position,
 }: {
   items: NavItems;
   className?: string;
   onTabClick?: (tab: TabName) => void;
+  position?: MotionValue<number>;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Record<string, HTMLElement | null>>({});
   const [, forceUpdate] = useState(0);
 
-  const activeItem = items.find((i) => i.isActive);
-  const activeKey = activeItem?.text ?? '';
-  const activeEl = itemRefs.current[activeKey] ?? null;
+  const activeIndex = items.findIndex((i) => i.isActive);
+  const itemEls = items.map((item) => itemRefs.current[item.text] ?? null);
 
   // Force re-render after refs are set on first mount
   useEffect(() => {
@@ -256,8 +302,13 @@ const NavMenu = ({
           }
         />
       ))}
-      {activeKey && (
-        <NavUnderline containerRef={containerRef} activeItemRef={activeEl} />
+      {activeIndex !== -1 && (
+        <NavUnderline
+          containerRef={containerRef}
+          itemEls={itemEls}
+          activeIndex={activeIndex}
+          position={position}
+        />
       )}
     </div>
   );
@@ -265,7 +316,7 @@ const NavMenu = ({
 
 const Nav = () => {
   const pathname = usePathname();
-  const { activeTab, setActiveTab, isTabRoute } = useMobileTab();
+  const { activeTab, setActiveTab, isTabRoute, position } = useMobileTab();
 
   // The tab state changes before the URL, so the underline moves at once.
   const items: NavItems = [
@@ -317,6 +368,8 @@ const Nav = () => {
             items={items}
             className="items-center justify-between w-full"
             onTabClick={onTabClick}
+            // Only the mobile layout swipes, so only its bar follows the strip.
+            position={isTabRoute ? position : undefined}
           />
         </div>
       </div>

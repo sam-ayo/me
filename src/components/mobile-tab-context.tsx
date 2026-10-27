@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 import { usePathname } from 'next/navigation';
+import { motionValue, useMotionValue, type MotionValue } from 'motion/react';
 
 export type TabName = 'about' | 'projects' | 'resume';
 
@@ -34,12 +35,16 @@ interface MobileTabContextValue {
   activeTab: TabName;
   setActiveTab: (tab: TabName) => void;
   isTabRoute: boolean;
+  /* The offset of the tab strip in panel widths: 0 shows the first tab, -1
+     the second. The nav underline reads it, so it moves with a swipe. */
+  position: MotionValue<number>;
 }
 
 const MobileTabContext = createContext<MobileTabContextValue>({
   activeTab: 'about',
   setActiveTab: () => {},
   isTabRoute: true,
+  position: motionValue(0),
 });
 
 export function MobileTabProvider({ children }: { children: React.ReactNode }) {
@@ -52,6 +57,7 @@ export function MobileTabProvider({ children }: { children: React.ReactNode }) {
   const [isTabRoute, setIsTabRoute] = useState(
     () => pathnameToTab(pathname) !== null,
   );
+  const position = useMotionValue(-TABS.indexOf(activeTab));
 
   useEffect(() => {
     const tab = pathnameToTab(pathname);
@@ -76,7 +82,7 @@ export function MobileTabProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <MobileTabContext.Provider value={{ activeTab, setActiveTab, isTabRoute }}>
+    <MobileTabContext.Provider value={{ activeTab, setActiveTab, isTabRoute, position }}>
       {children}
     </MobileTabContext.Provider>
   );
