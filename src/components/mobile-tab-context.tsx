@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 
 export type TabName = 'about' | 'projects' | 'resume';
 
-const TAB_PATHS: Record<TabName, string> = {
+export const TAB_PATHS: Record<TabName, string> = {
   about: '/',
   projects: '/projects',
   resume: '/resume',
@@ -23,7 +23,7 @@ const PATH_TO_TAB: Record<string, TabName> = {
   '/resume': 'resume',
 };
 
-function pathnameToTab(pathname: string): TabName | null {
+export function pathnameToTab(pathname: string): TabName | null {
   if (PATH_TO_TAB[pathname]) return PATH_TO_TAB[pathname];
   if (pathname.startsWith('/projects')) return 'projects';
   if (pathname.startsWith('/resume')) return 'resume';
@@ -63,20 +63,17 @@ export function MobileTabProvider({ children }: { children: React.ReactNode }) {
     }
   }, [pathname]);
 
-  const setActiveTab = useCallback(
-    (tab: TabName) => {
-      setActiveTabState(tab);
-      setIsTabRoute(true);
-      const path = TAB_PATHS[tab];
-      /* All the tabs are already on the page, so a tab switch only changes the
+  const setActiveTab = useCallback((tab: TabName) => {
+    setActiveTabState(tab);
+    setIsTabRoute(true);
+    const path = TAB_PATHS[tab];
+    /* All the tabs are already on the page, so a tab switch only changes the
          URL. Next.js syncs `usePathname` with `pushState` and restores the
          entry on back and forward, with no server request. */
-      if (window.location.pathname !== path) {
-        window.history.pushState(null, '', path);
-      }
-    },
-    [],
-  );
+    if (window.location.pathname !== path) {
+      window.history.pushState(null, '', path);
+    }
+  }, []);
 
   return (
     <MobileTabContext.Provider value={{ activeTab, setActiveTab, isTabRoute }}>

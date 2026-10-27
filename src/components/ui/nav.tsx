@@ -52,17 +52,16 @@ const NavUnderline = ({
   containerRef: React.RefObject<HTMLDivElement | null>;
   activeItemRef: HTMLElement | null;
 }) => {
-  const [pos, setPos] = useState<{ left: number; width: number } | null>(null);
+  const [pos, setPos] = useState<{ left: number; right: number } | null>(null);
 
   const measure = useCallback(() => {
     if (!activeItemRef || !containerRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     const itemRect = activeItemRef.getBoundingClientRect();
-    const newPos = {
+    setPos({
       left: itemRect.left - containerRect.left,
-      width: itemRect.width,
-    };
-    setPos(newPos);
+      right: containerRect.right - itemRect.right,
+    });
   }, [activeItemRef, containerRef]);
 
   useEffect(() => {
@@ -81,15 +80,15 @@ const NavUnderline = ({
 
   if (!pos) return null;
 
-  /* A 1px bar that moves and stretches with transform, so the slide skips
-     layout. A CSS transition, not Motion, runs it: Motion hands a transform
-     string to the Web Animations API, and when that animation ends the bar
-     shows its old position for one frame. */
+  /* The bar is as wide as the menu, and a clip shows only the part under the
+     active item. A 1px bar stretched with scaleX is too long on a phone: the
+     GPU stretches the pixel edge of the bar with the same scale. The clip
+     changes no layout, and its edges stay sharp at each frame. */
   return (
     <div
-      className="enter-fade absolute -bottom-1 left-0 h-0.5 w-px origin-left bg-current transition-transform duration-300 ease-out motion-reduce:transition-none"
+      className="enter-fade absolute -bottom-1 inset-x-0 h-0.5 bg-current transition-[clip-path] duration-300 ease-out motion-reduce:transition-none"
       style={{
-        transform: `translateX(${pos.left}px) scaleX(${pos.width})`,
+        clipPath: `inset(0 ${pos.right}px 0 ${pos.left}px)`,
       }}
     />
   );
