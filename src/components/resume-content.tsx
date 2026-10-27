@@ -76,7 +76,7 @@ export default function ResumeContent() {
   return (
     <div
       data-resume-root
-      className="enter-stagger flex flex-col gap-16 mt-8 print:gap-6 print:mt-0"
+      className="enter-stagger flex flex-col gap-16 mt-4 md:mt-8 print:gap-6 print:mt-0"
     >
       <header className="flex flex-col gap-6">
         <h1 className="hidden print:block text-xl font-semibold">{name}</h1>

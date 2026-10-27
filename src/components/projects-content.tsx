@@ -219,7 +219,7 @@ export default async function ProjectsList() {
   );
 
   return (
-    <div className="flex flex-col gap-4 mt-8">
+    <div className="flex flex-col gap-4 mt-4 md:mt-8">
       <div className="enter-stagger flex flex-col gap-1">
         {list.map((project) => (
           <ProjectPreview key={project.id} project={project} />
