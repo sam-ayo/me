@@ -130,7 +130,7 @@ export function MobileTabContainer({
           a phone the strip slides, so the motion matches the swipe. */}
       <div
         ref={trackRef}
-        className="flex items-start transition-transform [transition-duration:250ms] ease-drawer will-change-transform motion-reduce:duration-0 md:duration-0"
+        className="flex items-start transition-transform duration-200 ease-drawer will-change-transform motion-reduce:duration-0 md:duration-0"
         style={{ transform: `translateX(${-activeIndex * 100}%)` }}
       >
         {panels.map((content, i) => (

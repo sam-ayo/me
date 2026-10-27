@@ -87,7 +87,7 @@ const NavUnderline = ({
      shows its old position for one frame. */
   return (
     <div
-      className="enter-fade absolute -bottom-1 left-0 h-0.5 w-px origin-left bg-current transition-transform duration-300 ease-out motion-reduce:transition-none"
+      className="enter-fade absolute -bottom-1 left-0 h-0.5 w-px origin-left bg-current transition-transform duration-200 ease-drawer motion-reduce:transition-none"
       style={{
         transform: `translateX(${pos.left}px) scaleX(${pos.width})`,
       }}
