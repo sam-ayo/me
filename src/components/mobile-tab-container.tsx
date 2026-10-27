@@ -26,7 +26,7 @@ const DECELERATION_RATE = 0.998;
    rest values are small because the position unit is one panel width. */
 const SPRING = {
   type: 'spring',
-  visualDuration: 0.2,
+  visualDuration: 0.35,
   bounce: 0,
   restDelta: 0.001,
   restSpeed: 0.01,
