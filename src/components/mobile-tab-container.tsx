@@ -7,7 +7,13 @@ import {
   useTransform,
   type AnimationPlaybackControls,
 } from 'motion/react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useMobileTab, TABS, TAB_PATHS } from './mobile-tab-context';
 import {
   getScrollPositions,
@@ -211,7 +217,7 @@ export function MobileTabContainer({
   );
 
   const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
+    (e: TouchEvent) => {
       const state = drag.current;
       if (!state) return;
       const touch = e.touches[0];
@@ -226,6 +232,9 @@ export function MobileTabContainer({
         else if (moving.current) settle(shownIndex.current, 0);
       }
       if (state.axis !== 'x') return;
+      // The strip allows a vertical pan, so the page scrolls with the vertical
+      // drift of a swipe unless the move is canceled.
+      if (e.cancelable) e.preventDefault();
 
       const now = performance.now();
       state.samples.push({ t: now, x: dx });
@@ -241,6 +250,16 @@ export function MobileTabContainer({
     },
     [position, settle, startMoving],
   );
+
+  // React adds touch listeners as passive, so they cannot cancel a scroll.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.addEventListener('touchmove', handleTouchMove, {
+      passive: false,
+    });
+    return () => container.removeEventListener('touchmove', handleTouchMove);
+  }, [handleTouchMove]);
 
   const handleTouchEnd = useCallback(() => {
     const state = drag.current;
@@ -289,7 +308,6 @@ export function MobileTabContainer({
       ref={containerRef}
       className="overflow-hidden touch-pan-y touch-pinch-zoom"
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
     >
