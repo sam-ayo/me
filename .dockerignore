@@ -1,0 +1,10 @@
+.git
+.next
+.vercel
+.vscode
+.content-collections
+node_modules
+.env*
+.dev.vars
+*.tsbuildinfo
+deploy

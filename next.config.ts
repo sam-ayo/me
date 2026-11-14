@@ -4,6 +4,8 @@ import { withContentCollections } from '@content-collections/next';
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  // The Docker image for the Oracle Cloud VM runs the standalone server.
+  output: 'standalone',
 };
 
 const withMDX = createMDX({
